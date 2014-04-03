@@ -13,6 +13,7 @@
 #include <sys/resource.h>
 
 #define BASE_PORT 7000
+#define DEFAULT_NUM 10
 
 bool set_blocking(int fd, bool block)
 {
@@ -51,10 +52,11 @@ int main(int argc, char **argv)
 
     setlimit(100000);
 
+    int index = 0;
     while(1)
     {
-        int port = BASE_PORT;
-
+        int port = BASE_PORT + (index%DEFAULT_NUM);
+        index++;
         addr.sin_port = htons((short)port);
 
         int sock;
@@ -70,7 +72,7 @@ int main(int argc, char **argv)
         }
 
         connections ++;
-        printf("connections: %d, fd: %d\n", connections, sock);
+        printf("connections: %d, fd: %d, port %d\n", connections, sock, port);
 
         if(connections % 10000 == 9999)
         {
