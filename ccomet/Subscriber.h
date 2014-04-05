@@ -11,18 +11,20 @@ class HttpInstance;
 class Subscriber
 {
 public:
-	Subscriber(string sname, Channel *channel, Server *server, HttpInstance *instance, int seqid)
-		: sname(sname), channel(channel), server(server), instance(instance), seqid(seqid) { }
-	void start();
-	void process();
-	string getSName();
-	void sendmsg(string msg, int seqid);
+	Subscriber(string sname, Channel *channel, 
+		Server *server, HttpInstance *instance, int seqid);
+
+public:
+	string getSName() { return sname; }
+	void   send(string msg);
+	void   close();
+
 private:
-	Server *server;
+	Server  *server;
 	Channel *channel;
 	HttpInstance *instance;
-	int     msgseq;
 	string  sname;
-	int  seqid;
+	int     seqid;
 };
+
 #endif

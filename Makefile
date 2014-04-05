@@ -3,6 +3,7 @@ AR	    = ar
 LIBMISC	= libcustomserver.a
 RANLIB  = ranlib
 HEADER  = -I./core -I. -I./utils
+CHEADER = -I./ccomet
 CXXFLAGS = -g -O0
 PTHRFLAGS = -lpthread -pthread
 
@@ -14,16 +15,19 @@ PROGS = server client
 
 all: clean prepare ${PROGS}
 	
-server: tests/echo_server.cpp
+server: tests/echo_server.cpp utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
 
-client: tests/echo_client.cpp
+client: tests/echo_client.cpp utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
+
+comet: ccomet/Server.cpp ccomet/Subscriber.cpp ccomet/CComet.cpp utils/Log.cpp
+	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
 
 prepare:
 	mkdir bin
 
 clean: 
-	-rm -rf bin
+	-rm -rf bin comet

@@ -1,48 +1,60 @@
 
 #include "Server.h"
 
-int Server::login(map<string, string> &keys, HttpInstance* const instance)
+int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
 {
-	//channel id, name
-	if(keys.find("channelId") == keys.end() || keys.find("name") == keys.end())
+	//channel, sname
+	if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end())
 		return 0;
-	string channelId = keys["channelId"];
-	string name      = keys["name"];
-	Channel *channel = get_channel_by_id(channelId);
-	if(!channel) channel = new_channel(channelId); 
-	Subscriber *subscriber = channel->findSub(name);
-	if(!subscriber) subscriber = new Subscriber(name,channel,this,instance);
-	subscriber->start();
+	string cname = keys["channel"];
+	string sname = keys["sname"];
+
+	Channel     *channel = getChannel(cname);
+	if(!channel) channel = newChannel(cname); 
+	Subscriber *subscriber = channel->findSubscriber(sname);
+	assert(subscriber == NULL);
+	if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,0);
+	
+	channel->send(channel->formatStr(keys,"SIGN"));
+	subscriber->close();
 }
 
 int Server::pub(map<string, string> &keys, HttpInstance* const instance)
 {
-	//channel id, name, msg
-	if(keys.find("channelId") == keys.end() || keys.find("name") == keys.end()|| keys.find("msg") == keys.end())
+	//channel, sname, msg
+	if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()|| keys.find("msg") == keys.end())
 		return 0;
-	Channel *channel = get_channel_by_id(keys["channelId"]);
-	if(!channel) return 0;
-	channel->send(keys["msg"]);
 
-	instance->closedSocket();
+	string cname = keys["channel"];
+	string sname = keys["sname"];
+	string msg   = keys["msg"];
+
+	Channel *channel = getChannel(cname);
+	if(!channel) return 0;
+	
+	Subscriber *subscriber = channel->findSubscriber(sname);
+	assert(subscriber == NULL);
+	if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,0);
+
+	channel->send(channel->formatStr(keys,"MSG"));
+	subscriber->close();
 }
 
 int Server::sub(map<string, string> &keys, HttpInstance *const instance)
 {
-	//channel id, name, seqid
-	if(keys.find("channelId") == keys.end() || keys.find("name") == keys.end()|| keys.find("seqid") == keys.end())
+	//channel, sname, seqid
+	if(keys.find("channelId") == keys.end() || keys.find("sname") == keys.end()
+			|| keys.find("seqID") == keys.end() || !is_int(keys["seqID"]))
 		return 0;
-
+			
 	string channelId = keys["channelId"];
-	string name      = keys["name"];
-	string seqid     = keys["seqid"];
+	string sname     = keys["sname"];
+	int seqID        = to_int(keys["seqID"]);
 
-	Channel *channel = get_channel_by_id(channelId);
+	Channel *channel = getChannel(channelId);
 	if(!channel) return 0;
 	
-	Subscriber *subscriber = channel->findSub(name);
-	if(!subscriber) subscriber = new Subscriber(name,channel,this,instance);
-	subscriber->setseqid(seqid);	
-	subscriber->process();
+	Subscriber *subscriber = channel->findSubscriber(sname);
+	if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,seqID);
 }
 

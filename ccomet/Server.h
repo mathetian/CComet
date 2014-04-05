@@ -12,24 +12,24 @@ using namespace std;
 class Server
 {
 public:
-	int login(map<string, string> &keys, HttpInstance* const instance);
+	int sgn(map<string, string> &keys, HttpInstance* const instance);
 	int pub(map<string, string> &keys, HttpInstance* const instance);
 	int sub(map<string, string> &keys, HttpInstance* const instance);
 
 private:
-	Channel* get_channel_by_id(const string &name)
+	Channel* getChannel(const string &name)
 	{
-		if(cname_channels.find(name) == cname_channels.end())
+		if(channels.find(name) == channels.end())
 			return NULL;
-		return cname_channels[name];
+		return channels[name];
 	}
 
-	Channel* new_channel(const string &cname)
+	Channel* newChannel(const string &cname)
 	{
 		return new Channel(cname);
 	}
 	
 private:
-	map<string, Channel*> cname_channels;
+	map<string, Channel*> channels;
 };
 #endif

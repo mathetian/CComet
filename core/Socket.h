@@ -22,6 +22,7 @@ using namespace utils;
 #define CLSERR 3
 #define CLSWRR 4
 #define CLSMAN 5
+#define CLSHTP 6
 
 class Socket
 {

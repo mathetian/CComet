@@ -126,6 +126,12 @@ public:
         if(self_alloc == 1) zeros();
     }
 
+    Buffer(string str) : InnerBuffer(str.data(), str.size(), str.size() + 1), ref(new Atomic(0))
+    {
+        acquire();
+        this->self_alloc = 0;
+    }
+
     Buffer& operator = (const Buffer &other)
     {
         release();

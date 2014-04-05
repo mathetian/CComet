@@ -6,18 +6,21 @@
 #include "../core/Socket.h"
 #include "../core/Acceptor.h"
 
+#include "../utils/Log.h"
+using namespace utils;
+
 class HttpInstance :public MSGHandler
 {
 public:
 	HttpInstance(EventLoop& loop, Socket sock) : MSGHandler(loop, sock) { }
 
 public:
-	virtual void receivedMsg(STATUS status, Buffer &buf);
-    virtual void sendedMsg(STATUS status, int len, int targetLen) { }
-    virtual void closedSocket();
+	virtual void receivedMsg(STATUS status, Buffer &buf);//in `ccomet.cpp`
+    virtual void sendedMsg(STATUS status, int len, int targetLen) { } 
+    virtual void closedSocket() { INFO << "HttpInstance closedSocket" ; }
 
 private:
-	void parse(Buffer &buf) { }
+	void parse(Buffer &buf) { } //Todo list
 
 private:
 	string type;

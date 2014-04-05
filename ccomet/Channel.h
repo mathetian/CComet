@@ -7,25 +7,28 @@
 #include <string>
 using namespace std;
 
+#include "../utils/Utils.h"
+using namespace utils;
+
 #include "Subscriber.h"
 
 class Channel
 {
 public:
 	Channel(string cname) : cname(cname) { }
-	Subscriber *findSub(string name) 
+
+	Subscriber *findSubscriber(string name) 
 	{
-		if(subscribers.find(name) == subscribers.end())
-			return NULL;
-		return subscribers[name];
+		return subscribers.find(name) == subscribers.end() ?\
+			 NULL : subscribers[name];
 	}
 
-	bool addSubscriber(Subscriber *suber)
+	bool addSubscriber(Subscriber *subscriber)
 	{
-		string sname = suber->getSName();
+		string sname = subscriber->getSName();
 		if(subscribers.find(sname) == subscribers.end())
 			return false;
-		subscribers[sname] = suber;
+		subscribers[sname] = subscriber;
 		return true;
 	}
 
@@ -45,8 +48,25 @@ public:
 		for(;iter != subscribers.end();iter++)
 		{
 			subscriber = (*iter).second;
-			subscriber->sendmsg(msg, msgs.size());
+			subscriber->send(msg);
 		}
+	}
+
+	string formatStr(map<string, string> &keys, string type)
+	{
+		string sname = keys["sname"], msg;
+		string seqID = to_string(msgs.size());
+		if(type == "SIGN") msg = "SIGN";
+		else msg = keys["msg"];
+
+		string str = "{";
+		str += " \"type\":\""    + type + "\"" ;
+		str += ",\"msg\":\""     + msg + "\"" ;
+		str += ",\"sname\":\""   + sname + "\"" ;
+		str += ",\"seqID\":\""   + seqID + "\"" ;
+		str += ",\"channel\":\"" + cname + "\"";
+		str += "}";
+		return str;
 	}
 
 private:
@@ -54,5 +74,7 @@ private:
 	vector<string> msgs;
 	string cname;
 	string token;
+
+	friend class Subscriber;
 };
 #endif

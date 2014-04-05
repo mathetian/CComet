@@ -133,14 +133,10 @@ public:
 #define ERROR    LOG(error)
 #define FATAL    LOG(fatal)
 
-ostream* Log::m_out;
-Log      Log::m_log;
-int      Log::m_level;
-
 inline bool Log::operator ^ (const Log::LogMsg &msg)
 {
     msg.write(*m_out);
 }
 
-}
+};
 #endif

@@ -20,7 +20,7 @@ public:
         attach(); registerRead();
     }
 
-protected:
+public:
     int write(const Buffer& buf)
     {
         m_Bufs.push_back(buf);
@@ -73,6 +73,7 @@ private:
         }
     }
 
+public:
     virtual void onCloseSocket(int st)
     {
         DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
