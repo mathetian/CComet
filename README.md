@@ -1,1 +1,1 @@
-<h1>CComet is A tiny Comet Based on SealedServer<h1>
+<h1>CComet is A tiny Comet Based on SealedServer</h1>
