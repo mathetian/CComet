@@ -31,13 +31,13 @@ private:
             INFO << "Received: " << (string)buf << " through fd " << m_sock.get_fd();
             write(buf);
         }
-            
+
     }
 
     virtual void sendedMsg(STATUS status, int len, int targetLen)
     {
         if(status == SUCC)
-        { 
+        {
             INFO << "SendedMsg: " << len << " " << targetLen << " through fd " << m_sock.get_fd();
         }
         else { }
@@ -47,7 +47,7 @@ private:
     { }
 };
 
-void signalStop(int) 
+void signalStop(int)
 {
     INFO << "Stop running...by manually";
     loop.stop();
@@ -57,7 +57,7 @@ int setlimit(int num_pipes)
 {
     struct rlimit rl;
     rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
-    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1) 
+    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1)
     {
         fprintf(stderr, "setrlimit error: %s", strerror(errno));
         return 1;
@@ -68,7 +68,7 @@ int main()
 {
     ::signal(SIGINT, signalStop);
     setlimit(100000);
-    
+
     TCPAcceptor<EchoServer> acceptor(loop, PORT);
     loop.runforever();
 

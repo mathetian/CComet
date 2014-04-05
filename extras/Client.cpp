@@ -29,7 +29,7 @@ int setlimit(int num_pipes)
 {
     struct rlimit rl;
     rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
-    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1) 
+    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1)
     {
         fprintf(stderr, "setrlimit error: %s", strerror(errno));
         return 1;

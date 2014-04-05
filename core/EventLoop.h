@@ -9,7 +9,7 @@ using namespace std;
 #include "Selector.h"
 
 class EventLoop
-{   
+{
     map<int, SocketHandler*> m_map;
     bool   m_quitFlag;
     Selector *m_selector;
@@ -24,10 +24,12 @@ public:
         for(; iter != m_map.end(); iter++)
         {
             SocketHandler *tmpHandler = iter->second;
-            delete tmpHandler; tmpHandler = NULL;
+            delete tmpHandler;
+            tmpHandler = NULL;
         }
         m_map.clear();
-        delete m_selector; m_selector = NULL;
+        delete m_selector;
+        m_selector = NULL;
     }
 
     void runforever()
@@ -35,7 +37,7 @@ public:
         while (!m_quitFlag)
             run_once();
         map<int,SocketHandler*>::iterator iter = m_map.begin();
-        for(;iter!=m_map.end();iter++)
+        for(; iter!=m_map.end(); iter++)
         {
             SocketHandler *handler = (*iter).second;
             m_selector->unRegisterEvent(handler, -1);
@@ -52,7 +54,7 @@ public:
     {
         m_quitFlag = 1;
     }
-    
+
     void attachHandler(int fd, SocketHandler *p)
     {
         assert(m_map.find(fd) == m_map.end());

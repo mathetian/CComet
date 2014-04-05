@@ -116,7 +116,8 @@ public:
         out += " [";
         out += file_str;
         out += ":";
-        ostringstream o1; o1 << m_line;
+        ostringstream o1;
+        o1 << m_line;
         out += o1.str();
         out += "] ";
 

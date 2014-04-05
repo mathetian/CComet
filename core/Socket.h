@@ -30,9 +30,9 @@ private:
     int    m_fd;
 
 public:
-    Socket(int fd = -1) : m_fd(fd){ }
+    Socket(int fd = -1) : m_fd(fd) { }
 
-    Socket(int family, int type) : 
+    Socket(int family, int type) :
         m_fd(::socket(family, type, 0))
     {
         set_blocking(false);
@@ -43,7 +43,10 @@ public:
 
     Socket(Socket const& sock) : m_fd(sock.m_fd) { }
 
-    int get_fd() const { return m_fd; }
+    int get_fd() const
+    {
+        return m_fd;
+    }
 
     bool bindlisten(const Address *paddr)
     {
@@ -92,14 +95,17 @@ public:
             }
             else break;
         }
-        
+
         pa->setAddr(&addr, addrlen);
         return Socket(new_fd);
     }
 
 
 public:
-    void close() { ::close(m_fd); }
+    void close()
+    {
+        ::close(m_fd);
+    }
 
     int read(void *buf, uint32_t count)
     {
@@ -165,7 +171,10 @@ class TCPSocket : public Socket
 {
 public:
     TCPSocket() : Socket() {}
-    TCPSocket(Address *paddr) : Socket(AF_INET, SOCK_STREAM) {  bindlisten(paddr); }
+    TCPSocket(Address *paddr) : Socket(AF_INET, SOCK_STREAM)
+    {
+        bindlisten(paddr);
+    }
     TCPSocket(const Socket& sock) : Socket(sock) {}
 };
 

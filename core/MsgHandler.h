@@ -17,7 +17,8 @@ public:
     MSGHandler(EventLoop& loop, Socket sock) : SocketHandler(loop)
     {
         m_sock = sock;
-        attach(); registerRead();
+        attach();
+        registerRead();
     }
 
 public:
@@ -78,9 +79,11 @@ public:
     virtual void onCloseSocket(int st)
     {
         DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
-        
-        detach(); closedSocket();
-        m_sock.close(); delete this;
+
+        detach();
+        closedSocket();
+        m_sock.close();
+        delete this;
     }
 
 public:

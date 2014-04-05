@@ -17,3 +17,4 @@ tests/echo_client
 tests/echo_server
 ccomet/Channel
 ccomet/HttpInstance
+*orig

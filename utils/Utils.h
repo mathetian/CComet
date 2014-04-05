@@ -122,12 +122,12 @@ inline string to_escaped_string(const void *data, int length)
 
 inline bool is_int(const string & s)
 {
-   if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
+    if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
 
-   char * p ;
-   strtol(s.c_str(), &p, 10) ;
+    char * p ;
+    strtol(s.c_str(), &p, 10) ;
 
-   return (*p == 0) ;
+    return (*p == 0) ;
 }
 
 inline int to_int(string str)

@@ -94,8 +94,9 @@ private:
         if(self_alloc == 0) return;
         if (ref && (ref->addAndGet(-1)) == 0)
         {
-           delete[] dat;
-           delete ref; ref = NULL;
+            delete[] dat;
+            delete ref;
+            ref = NULL;
         }
     }
 

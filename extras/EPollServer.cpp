@@ -25,13 +25,19 @@ using namespace std;
 
 class Msg
 {
-int fd;
-int events;
-int type;
+    int fd;
+    int events;
+    int type;
 public:
     Msg(int fd, int type) : fd(fd), events(0), type(type) { }
-    int getType() { return type; }
-    int getFD() { return fd; }
+    int getType()
+    {
+        return type;
+    }
+    int getFD()
+    {
+        return fd;
+    }
 };
 
 map<int, Msg*> imsgs;
@@ -50,7 +56,7 @@ int setlimit(int num_pipes)
 {
     struct rlimit rl;
     rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
-    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1) 
+    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1)
     {
         fprintf(stderr, "setrlimit error: %s", strerror(errno));
         return 1;
@@ -64,7 +70,7 @@ vector<int> createServer(int num = DEFAULT_NUM)
     int opt = 1;
     vector<int> serv_socks(num,-1);
 
-    for(int i=0;i<num;i++)
+    for(int i=0; i<num; i++)
     {
         int port = BASE_PORT + i;
         bzero(&addr, sizeof(addr));
@@ -84,11 +90,11 @@ vector<int> createServer(int num = DEFAULT_NUM)
             goto sock_err;
 
         printf("server listen on port: %d\n", port);
-        serv_socks[i] = serv_sock;        
+        serv_socks[i] = serv_sock;
     }
-    
+
     return serv_socks;
-    
+
 sock_err:
     printf("error: %s\n", strerror(errno));
     return serv_socks;
@@ -97,9 +103,9 @@ sock_err:
 bool inset(int fd, vector<int> &serv_socks)
 {
     int num = serv_socks.size();
-    for(int i=0;i<num;i++)
+    for(int i=0; i<num; i++)
     {
-        if(fd == serv_socks[i]) 
+        if(fd == serv_socks[i])
             return true;
     }
     return false;
@@ -108,13 +114,14 @@ bool inset(int fd, vector<int> &serv_socks)
 int main(int argc, char **argv)
 {
     int bufsize, connections = 0;
-    socklen_t optlen; int maxfd;
+    socklen_t optlen;
+    int maxfd;
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(addr);
 
     vector<int> serv_socks = createServer(DEFAULT_NUM);
     optlen = sizeof(bufsize);
-    
+
     int m_epollFD;
     struct epoll_event *events;
 
@@ -122,13 +129,13 @@ int main(int argc, char **argv)
     events = (struct epoll_event*)malloc(MAX_NEVENTS * sizeof(struct epoll_event));
     assert(events != NULL);
 
-    for(int i=0;i<DEFAULT_NUM;i++)
+    for(int i=0; i<DEFAULT_NUM; i++)
     {
-        if(serv_socks[i] == -1) 
+        if(serv_socks[i] == -1)
             goto sock_err;
         getsockopt(serv_socks[i], SOL_SOCKET, SO_RCVBUF, &bufsize, &optlen);
         printf("default send/recv buf size: %d\n", bufsize);
-        
+
         imsgs[serv_socks[i]] = new Msg(serv_socks[i],0);
 
         struct epoll_event ev;
@@ -145,17 +152,18 @@ int main(int argc, char **argv)
         int ret = epoll_wait(m_epollFD, events, MAX_NEVENTS, 5000);
         if(ret < 0)
         {
-            if(errno == EINTR) 
+            if(errno == EINTR)
                 continue;
             else
-                goto 
-            sock_err;
+                goto
+                sock_err;
         }
         if(ret == 0) continue;
-        for(int i=0;i<ret; i++)
+        for(int i=0; i<ret; i++)
         {
             assert(imsgs.find(events[i].data.fd) != imsgs.end());
-            Msg*msg = imsgs[events[i].data.fd]; int what = events[i].events;
+            Msg*msg = imsgs[events[i].data.fd];
+            int what = events[i].events;
 
             if(msg->getType() == 1)
             {
@@ -165,14 +173,16 @@ int main(int argc, char **argv)
                     printf("Need close %d\n", msg->getFD());
                     ::close(msg->getFD());
                     imsgs.erase(msg->getFD());
-                    delete msg; msg = NULL;
+                    delete msg;
+                    msg = NULL;
                 }
                 else
                 {
                     if(what & EPOLLIN)
                     {
-                        char buf[1024]; memset(buf, 0, 1024);
-            
+                        char buf[1024];
+                        memset(buf, 0, 1024);
+
                         while(true)
                         {
                             int count = ::read(msg->getFD(), buf, 1024);
@@ -202,7 +212,7 @@ int main(int argc, char **argv)
                 {
                     if(what & EPOLLIN)
                     {
-            retry:
+retry:
                         int sock = accept(msg->getFD(), (struct sockaddr *)&addr, &addrlen);
                         if(sock < 0)
                         {
@@ -211,7 +221,7 @@ int main(int argc, char **argv)
                                 printf("Need retry\n");
                                 goto retry;
                             }
-                            else 
+                            else
                                 goto sock_err;
                         }
 

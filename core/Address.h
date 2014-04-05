@@ -84,7 +84,10 @@ public:
         m_addr = string(static_cast<const char *>(static_cast<const void *>(&a)), sizeof a);
     }
 
-    NetAddress(string ip, port pt) { init(ip, pt); }
+    NetAddress(string ip, port pt)
+    {
+        init(ip, pt);
+    }
 
     NetAddress(const void *addr, socklen_t len) : Address(addr, len) { }
 

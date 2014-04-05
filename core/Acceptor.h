@@ -31,24 +31,26 @@ public:
         INFO << "TCPAcceptor Initialization" ;
         INFO << m_sock.getsockname() ;
     }
-    
+
 private:
     void onReceiveMsg()
     {
         NetAddress a;
         TCPSocket sock = m_sock.accept(&a);
         INFO << "New Connection: " << sock.get_fd() << " " << sock.getpeername();
-        if (sock.get_fd() >= 0) 
+        if (sock.get_fd() >= 0)
             T* t = new T(*getLoop(), sock);
     }
 
     void onSendMsg() { }
-    void onCloseSocket(int st) 
+    void onCloseSocket(int st)
     {
         assert(st == 0);
         DEBUG << "close listen socket fd: " << m_sock.get_fd();
-        
-        detach(); m_sock.close(); delete this;
+
+        detach();
+        m_sock.close();
+        delete this;
     }
 };
 
