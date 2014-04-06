@@ -83,4 +83,5 @@ private:
 
     friend class Subscriber;
 };
+
 #endif

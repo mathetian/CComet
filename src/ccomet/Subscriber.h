@@ -16,7 +16,7 @@ class Subscriber
 {
 public:
     Subscriber(string sname, Channel *channel,
-               Server *server, HttpInstance *instance, int seqid);
+               Server *server, HttpInstance *instance, int seqid, string callback);
 
 public:
     string getSName()

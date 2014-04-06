@@ -216,7 +216,6 @@ var sub_url  = 'http://' + ccomet_host + '/sub?';
 var msgs = [];
 function addmsg(euid, name, content, is) 
 {
-	console.log(euid);console.log(name);console.log(content);console.log(is);
 	is = is || false
 		var l = 'm' + (Math.random() + '').replace('.', '').substr(1, 6);
 	content = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -275,7 +274,6 @@ function join()
 		sub_url : sub_url,
 		pub_url : pub_url,
 		callback: function (item) {
-			console.log(item);
 			addmsg(item.sname, item.sname, item.msg, false);
 		}
 	});

@@ -38,9 +38,12 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
     if(errcode == 1 || !isInSts(type))
     {
         INFO << "Error HttpQuery, Errcode: " << errcode ;
-        string msg = "ccomet_cb('[{\"type\" : \"404\"}]')";
-        write(msg);
-        
+        if(keys.find("callback") != keys.end())
+        {
+            string callback = keys["callback"];
+            string msg = callback + "('[{\"type\" : \"404\"}]')";
+            write(msg);
+        }
         clsStatus = 1;
         onCloseSocket(CLSHTP);
     }
@@ -50,17 +53,22 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
         else if(type=="sub")  flag = server.sub(keys, this);
         else flag = server.pub(keys, this);
 
-        if(flag != SUCCEEED && flag != NEEDCLSD)
+        if(flag == SUCCEEED) { }
+        else if(flag == NEEDCLSD) onCloseSocket(CLSHTP);
+        else
         {
             INFO << "something error: " << flag;
-            string msg = "ccomet_cb('[{\"type\" : \"401\"}]')";
-            write(msg);
-            
-            clsStatus = 1;
-            onCloseSocket(CLSHTP);
-        }
-        else if(flag == NEEDCLSD)
-            onCloseSocket(CLSHTP);
+            if(flag == ERRPARAM || flag == ERRCHANL) 
+            { clsStatus = 1; onCloseSocket(CLSHTP);}
+            else
+            {
+                string callback = keys["callback"];
+                string msg = callback + "('[{\"type\" : \"401\"}]')";
+                write(msg);
+                
+                onCloseSocket(CLSHTP);
+            }
+        }  
     }
 }
 
