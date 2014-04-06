@@ -28,6 +28,7 @@ public:
     {
         clsStatus = 1;
     }
+
     void    addSubscriber(Subscriber *const subscriber)
     {
         this->subscriber = subscriber;
@@ -84,7 +85,20 @@ private:
         while(i<msg.size()&&errcode == 0)
         {
             int j=i;
-            while(j<msg.size()&&msg.at(j)!='&') j++;
+            while(j<msg.size())
+            {
+                if(msg.at(j)!='&') { j++; continue; }
+                else
+                {
+                    if(j+3<msg.size())
+                    {
+                        string st = msg.substr(j+1,3);
+                        if(st=="gt;"||st=="lt;")
+                        { j++; continue; }
+                    }
+                    break;
+                }
+            } 
             if(i==j)
             {
                 errcode = 1;
