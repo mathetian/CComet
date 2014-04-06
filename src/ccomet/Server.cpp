@@ -39,7 +39,8 @@ int Server::pub(map<string, string> &keys, HttpInstance* const instance)
 
     string smsg = channel->formatStr(keys,"MSG");
     channel->send(smsg);
-    instance->write(smsg);
+    
+    instance->write("ccomet_cb('[{\"type\" : \"pub\"}]')");
 
     instance->setStatus();
     return NEEDCLSD;

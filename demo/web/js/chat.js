@@ -309,7 +309,6 @@ function send()
 	}
 	$('#errors').html('');
 
-	addmsg(uid, nickname, content, true);
 	
 	comet.pub(content);
 }

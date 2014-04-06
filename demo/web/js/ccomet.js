@@ -3,7 +3,7 @@ function CComet(config)
 	var self = this;
 	
 	self.cb = 'ccomet_cb';
-	self.sedid = 0;
+	self.seqid = 0;
 	self.sub_url  = config.sub_url;
 	self.pub_url  = config.pub_url;
 	self.sign_url = config.sign_url;
@@ -13,7 +13,6 @@ function CComet(config)
 	
 	window[self.cb] = function(msg)
 	{
-		console.log(typeof msg);
 		var msg = JSON.parse(msg);
 		var item = msg[0];
 		console.log(msg);
@@ -27,13 +26,17 @@ function CComet(config)
 		}
 		else if(item.type == 'pub')
 		{
-
+			self.log('pub successfully');
 		}
 		else
 		{
+			console.log(msg);
 			for(var item in msg)
 				self.callback(msg[item]);
-			seqid = parseInt(item[item.length-1].seqid)+1;
+			self.seqid = parseInt(msg[msg.length-1].seqid)+1;
+			if(self.sign_status == 0)
+				self.sign_status = 1;
+			self.callbackflag = 0;
 		}
 	}
 
@@ -52,8 +55,7 @@ function CComet(config)
 	self.sub = function(){
 		self.log('subscriber...');
 
-		var url = self.sub_url + self.seqid + '&time=' + new Date().getTime();
-		
+		var url = self.sub_url + self.seqid.toString() + '&time=' + new Date().getTime();
 		$.ajax({
 			url: url,
 			dataType: "jsonp",
@@ -65,7 +67,6 @@ function CComet(config)
 		self.log('publish...');
 
 		var url = self.pub_url + content + '&time=' + new Date().getTime();
-		console.log(url);
 		$.ajax({
 			url: url,
 			dataType: "jsonp",

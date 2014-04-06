@@ -13,7 +13,7 @@ void Subscriber::send(string msg)
 {
     INFO << "Subscriber send: " << msg;
     msg = callback + "('[" + msg + "]')";
-    INFO << msg;
+    INFO << "Subscriber send: " << msg;
     instance->write(msg);
 }
 

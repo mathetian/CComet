@@ -38,7 +38,7 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
     if(errcode == 1 || !isInSts(type))
     {
         INFO << "Error HttpQuery, Errcode: " << errcode ;
-        string msg = "ccomet_cb('{[\"type\" : \"404\"}]')";
+        string msg = "ccomet_cb('[{\"type\" : \"404\"}]')";
         write(msg);
         
         clsStatus = 1;
