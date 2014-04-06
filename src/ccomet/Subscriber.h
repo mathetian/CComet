@@ -34,7 +34,7 @@ private:
     HttpInstance *instance;
     string  sname;
     int     seqid;
-
+    string  callback;
     friend class Channel;
 };
 

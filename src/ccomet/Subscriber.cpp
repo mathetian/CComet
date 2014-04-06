@@ -3,7 +3,7 @@
 #include "HttpInstance.h"
 
 Subscriber::Subscriber(string sname, Channel *channel, Server *server, HttpInstance *instance, int seqid)
-    : sname(sname), channel(channel), server(server), instance(instance), seqid(seqid)
+    : sname(sname), channel(channel), server(server), instance(instance), seqid(seqid), callback("ccomet_cb")
 {
     channel->addSubscriber(this);
     instance->addSubscriber(this);
@@ -12,6 +12,8 @@ Subscriber::Subscriber(string sname, Channel *channel, Server *server, HttpInsta
 void Subscriber::send(string msg)
 {
     INFO << "Subscriber send: " << msg;
+    msg = callback + "('[" + msg + "]')";
+    INFO << msg;
     instance->write(msg);
 }
 
@@ -24,10 +26,13 @@ void Subscriber::close(int type)
 
 void Subscriber::sendOldMsg()
 {
-    string msg = "{";
+    string msg = callback + "('[";
     for(int i=0; i<channel->msgs.size(); i++)
+    {
+        if(i!=0) msg += ",";
         msg += channel->msgs[i];
-    msg += "}";
+    }
+    msg += "]')";
     INFO << "Subscriber sendOldMsg: " << msg;
     instance->write(msg);
 }
@@ -43,10 +48,13 @@ int Subscriber::trySend()
         return NEEDWT;
     else
     {
-        string msg = "{";
+        string msg = callback + "('[";
         for(int i=seqid; i<channel->msgs.size(); i++)
+        {
+            if(i!=seqid) msg += ",";
             msg += channel->msgs[i];
-        msg += "}";
+        }
+        msg += "]')";
         instance->write(msg);
         return SENTNE;
     }

@@ -62,7 +62,7 @@ public:
     string formatStr(map<string, string> &keys, string type)
     {
         string sname = keys["sname"], msg;
-        string seqID = to_string(msgs.size());
+        string seqid = to_string(msgs.size());
         if(type == "SIGN") msg = "SIGN";
         else msg = keys["msg"];
 
@@ -70,7 +70,7 @@ public:
         str += " \"type\":\""    + type + "\"" ;
         str += ",\"msg\":\""     + msg + "\"" ;
         str += ",\"sname\":\""   + sname + "\"" ;
-        str += ",\"seqID\":\""   + seqID + "\"" ;
+        str += ",\"seqid\":\""   + seqid + "\"" ;
         str += ",\"channel\":\"" + cname + "\"";
         str += "}";
         return str;

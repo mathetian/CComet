@@ -9,7 +9,7 @@ int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
 
     string cname = keys["channel"];
     string sname = keys["sname"];
-
+    
     Channel     *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
     string msg = channel->formatStr(keys,"SIGN");
@@ -19,7 +19,7 @@ int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
     if(subscriber) return ERRDULPE;
     if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,0);
     subscriber->sendOldMsg();
-
+    
     subscriber->close();
     return NEEDCLSD;
 }

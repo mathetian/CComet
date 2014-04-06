@@ -6,9 +6,9 @@ using namespace std;
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#include "../core/Socket.h"
-#include "../core/EventLoop.h"
-#include "../core/MsgHandler.h"
+#include "core/EventLoop.h"
+#include "core/MsgHandler.h"
+#include "core/Socket.h"
 
 #define PORT 10000
 #define CLIENT_NUM 1000

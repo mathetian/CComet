@@ -38,7 +38,9 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
     if(errcode == 1 || !isInSts(type))
     {
         INFO << "Error HttpQuery, Errcode: " << errcode ;
-        write("Error HttpQuery");
+        string msg = "ccomet_cb('{[\"type\" : \"404\"}]')";
+        write(msg);
+        
         clsStatus = 1;
         onCloseSocket(CLSHTP);
     }
@@ -51,7 +53,9 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
         if(flag != SUCCEEED && flag != NEEDCLSD)
         {
             INFO << "something error: " << flag;
-            write("Something Error");
+            string msg = "ccomet_cb('[{\"type\" : \"401\"}]')";
+            write(msg);
+            
             clsStatus = 1;
             onCloseSocket(CLSHTP);
         }

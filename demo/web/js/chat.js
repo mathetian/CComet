@@ -1,4 +1,3 @@
-// misc func
 function htmlEntities(str) {
 	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -150,7 +149,6 @@ function toemote(content, format) {
 	return content
 }
 
-// detect tab changes
 var isTabOpen = 0;
 var timer;
 $(window).on("blur focus", function (e) {
@@ -189,15 +187,12 @@ function convertToLinks(text) {
 	var replaceText,
 	replacePattern1;
 
-	//URLs starting with http://, https://
 	replacePattern1 = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
 	replacedText = text.replace(replacePattern1, '<a class="colored-link-1" title="$1" href="$1" target="_blank">$1</a>');
 
-	//URLs starting with "www."
 	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 	replacedText = replacedText.replace(replacePattern2, '$1<a class="colored-link-1" href="http://$2" target="_blank">$2</a>');
 
-	//returns the text result
 	return replacedText;
 }
 
@@ -212,39 +207,16 @@ var uid = 'u' + (Math.random() + '').replace('.', '').substr(1, 6);
 var nickname = '';
 
 var comet;
-var app_host = '127.0.0.1:8080';
-var admin_host = '127.0.0.1:8000';
-var icomet_host = '127.0.0.1:8100';
+var ccomet_host = '127.0.0.1:10000';
 
-// for testing only
-var n = location.href.match(/http[s]?:\/\/([^\/]*)\//);
-if (n && n.length == 2) {
-	app_host = n[1];
-	var ps = n[1].split(':');
-	admin_host = ps[0] + ':8000';
-	icomet_host = ps[0] + ':8100';
-}
-
-var testing = location.href.indexOf('http') != 0;
-if (testing) {
-	// This is for test purpose only
-	var sign_url = 'http://' + admin_host + '/sign';
-	var pub_url = 'http://' + admin_host + '/pub?cb=?';
-} else {
-	// In real world business, signUrl/pubUrl should link to an application server
-	// which will do neccessary authentication.
-	var n = location.href.match(/http[s]?:\/\/[^\/]*\/(.*)\/.*/);
-	var path = '';
-	if(n && n.length == 2){
-		path = '/' + n[1];
-	}
-	var sign_url = 'http://' + app_host + path + '/php/sign.php';
-	var pub_url = 'http://' + app_host + path + '/php/pub.php?cb=?';
-}
-var sub_url = 'http://' + icomet_host + '/sub';
+var sign_url = 'http://' + ccomet_host + '/sign?';
+var pub_url  = 'http://' + ccomet_host + '/pub?';
+var sub_url  = 'http://' + ccomet_host + '/sub?';
 
 var msgs = [];
-function addmsg(euid, name, content, is) {
+function addmsg(euid, name, content, is) 
+{
+	console.log(euid);console.log(name);console.log(content);console.log(is);
 	is = is || false
 		var l = 'm' + (Math.random() + '').replace('.', '').substr(1, 6);
 	content = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -254,53 +226,60 @@ function addmsg(euid, name, content, is) {
 	content = toemote(content, "<span class=\"emoticon\" style=\"$$EMOTE$$\"></span>");
 	content = convertToLinks(content);
 
-	if (euid != uid || is) {
-		if (euid == uid) {
-			msgs[content] = l;
-		}
-		html += "<tr>";
-		html += '<td id="' + l + '"' + (euid == uid ? ' class="po sent"' : '') + ' width="20px">&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-		switch ($.trim(content).split(" ")[0]) {
-		case "/me":
-			html += '<td class="chat_names">*</td>';
-			html += '<td class="chat_content"><span class="chat_names">' + name + '</span> ' + content.substr(4, content.length) + '</td>';
-			break;
-
-		default:
-			html += '<td class="chat_names">' + name + '</td>';
-			html += '<td class="chat_content">' + content + '</td>';
-			break;
-		}
-		html += "</tr>";
-
-		flashTitle('iComet Example Chat', '* People said stuff *');
-	} else {
-		$("#" + msgs[content]).removeClass("sent");
+	if (euid == uid) {
+		msgs[content] = l;
 	}
+	html += "<tr>";
+	html += '<td id="' + l + '"'  + ' width="20px">&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+	switch ($.trim(content).split(" ")[0]) {
+	case "/me":
+		html += '<td class="chat_names">*</td>';
+		html += '<td class="chat_content"><span class="chat_names">' + name + '</span> ' + content.substr(4, content.length) + '</td>';
+		break;
+
+	default:
+		html += '<td class="chat_names">' + name + '</td>';
+		html += '<td class="chat_content">' + content + '</td>';
+		break;
+	}
+	html += "</tr>";
+
+	flashTitle('CComet Example Chat', '* People said stuff *');
+	
 
 	$('#chat').append(html);
 	$('#recv_chat_window').scrollTop($('#recv_chat_window')[0].scrollHeight);
 }
 
-function join() {
-	nickname = $.trim($('*[name=nickname]').val());
+function join() 
+{
+	var nickname = $.trim($('*[name=nickname]').val());
+	var channel = $('*[name=channel]').val();
+
 	nickname = nickname.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	if (nickname.length == 0) {
-		alert('Please enter your nickname!');
+	if (nickname.length == 0 || channel.length == 0) 
+	{
+		alert('Please enter correct input!');
 		return false;
 	}
 
-	var channel = $('*[name=channel]').val();
-	comet = new iComet({
+	var comstr = 'channel=' + channel + '&sname=' + nickname;
+	sign_url = sign_url + comstr;
+	pub_url  = pub_url  + comstr + '&msg=';
+	sub_url  = sub_url  + comstr + '&seqid=';
+
+	comet = new CComet({
 		channel : channel,
-		signUrl : sign_url,
-		subUrl : sub_url,
-		pubUrl : pub_url,
-		callback : function (content) {
-			var msg = JSON.parse(content);
-			addmsg(msg.uid, msg.nickname, msg.content, false);
+		sname   : nickname,
+		sign_url : sign_url,
+		sub_url : sub_url,
+		pub_url : pub_url,
+		callback: function (item) {
+			console.log(item);
+			addmsg(item.sname, item.sname, item.msg, false);
 		}
 	});
+
 	$('#login_form').hide();
 	$('#chat_window').show();
 	$('#chat_window h3').html('Channel: ' + channel);
@@ -314,7 +293,8 @@ function join() {
 	$('#share').html(html);
 }
 
-function send() {
+function send() 
+{
 	var t = $('#chat_window textarea[name=content]');
 	var content = $.trim(t.val());
 	content = htmlEntities(content);
@@ -323,7 +303,7 @@ function send() {
 		$('#errors').html('content empty!');
 		return false;
 	}
-	if (content.length > 1000) {
+	if (content.length > 512) {
 		$('#errors').html('content too long!');
 		return false;
 	}
@@ -331,12 +311,7 @@ function send() {
 
 	addmsg(uid, nickname, content, true);
 	
-	var msg = {
-		'uid' : uid,
-		'nickname' : nickname,
-		'content' : content
-	};
-	comet.pub(JSON.stringify(msg));
+	comet.pub(content);
 }
 
 var w = window,
