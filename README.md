@@ -40,6 +40,7 @@ And run the web-demo in directory ```demo/web/```
 ## Bugs
 
 There are many bugs in the project.
+
 1. Write buffer overflow
 2. Can't process specil character.
 3. ...
@@ -55,3 +56,7 @@ There are many bugs in the project.
 
 1. Use jsonp to solve [CORS](en.wikipedia.org/wiki/Cross-origin_resource_sharing‎)(Cross-Origin Resource Sharing) problem.
 2. Long-polling instead of polling. To solve some problem in jsonp, I use a timeout 30 seconds, which is a reasonable value, in produce mode.
+
+## License
+
+This client is licensed under the same license as SealedServer.
