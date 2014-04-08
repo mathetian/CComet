@@ -14,6 +14,7 @@ class EventLoop
     bool   m_quitFlag;
     Selector *m_selector;
 
+    vector<SocketHandler*> m_del;
 public:
     EventLoop() : m_quitFlag(false), m_selector(new Selector(this))
     { }
@@ -104,20 +105,41 @@ public:
         assert(m_map.find(fd) != m_map.end());
         SocketHandler *handler = m_map[fd];
 
+        if((type & EPOLLRDHUP) || (type & EPOLLERR) || (type & EPOLLHUP))
+        {
+            m_selector->unRegisterEvent(handler, -1);
+            handler->onCloseSocket(CLSEVT);
+            return;
+        }
+
+        if(handler->getdelflag() == 1) return;
         if((type & EPOLLIN) != 0)
             handler->onReceiveMsg();
-
+        if(handler->getdelflag() == 1) return;
         if((type & EPOLLOUT) != 0)
         {
             m_selector->unRegisterEvent(handler, EPOLLOUT);
             handler->onSendMsg();
         }
+    }
 
-        if((type & EPOLLRDHUP) || (type & EPOLLERR) || (type & EPOLLHUP))
+    void addDel(SocketHandler*handler)
+    {
+        m_del.push_back(handler);
+    }
+
+    void finDel()
+    {
+        DEBUG << "Need Destory " << m_del.size() << " Objects";
+
+        for(int i=0;i<m_del.size();i++)
         {
-            m_selector->unRegisterEvent(handler, -1);
-            handler->onCloseSocket(CLSEVT);
+            SocketHandler *handler = m_del[i];
+            if(handler) delete handler; 
+            handler = NULL;
         }
+        vector<SocketHandler*> handlers;
+        swap(handlers, m_del);
     }
 };
 
@@ -170,6 +192,8 @@ inline int Selector::dispatch()
         SocketHandler *handler = (SocketHandler*)m_events[i].data.ptr;
         m_loop->addActive(handler->getSocket().get_fd(), what);
     }
+
+    m_loop->finDel();
 }
 
 #endif

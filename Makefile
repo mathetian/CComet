@@ -29,6 +29,9 @@ comet: src/ccomet/Server.cpp src/ccomet/Subscriber.cpp src/ccomet/CComet.cpp src
 	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
 	mv $@ bin
 
+EPollServer: extras/EPollServer.cpp
+	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
+
 prepare:
 	mkdir bin
 

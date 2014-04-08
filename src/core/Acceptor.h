@@ -37,7 +37,7 @@ private:
     {
         NetAddress a;
         TCPSocket sock = m_sock.accept(&a);
-        INFO << "New Connection: " << sock.get_fd() << " " << sock.getpeername();
+        DEBUG << "New Connection: " << sock.get_fd() << " " << sock.getpeername();
         if (sock.get_fd() >= 0)
             T* t = new T(*getLoop(), sock);
     }
@@ -50,7 +50,7 @@ private:
 
         detach();
         m_sock.close();
-        delete this;
+       // delete this;
     }
 };
 

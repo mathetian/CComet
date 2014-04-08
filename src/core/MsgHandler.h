@@ -9,6 +9,8 @@ using namespace std;
 #include "../utils/Log.h"
 using namespace utils;
 
+#include "EventLoop.h"
+
 #define MSGLEN 1024
 
 class MSGHandler : public SocketHandler
@@ -25,7 +27,6 @@ public:
     int write(const Buffer& buf)
     {
         m_Bufs.push_back(buf);
-        //registerWrite();
         onSendMsg();
     }
 
@@ -70,7 +71,11 @@ private:
                 registerWrite();
                 break;
             }
-            else if(len < 0) onCloseSocket(CLSWRR);
+            else if(len < 0)
+            {
+                onCloseSocket(CLSWRR);
+                break;
+            }
             else sendedMsg(SUCC, len, length);
         }
     }
@@ -78,12 +83,14 @@ private:
 public:
     virtual void onCloseSocket(int st)
     {
+        DEBUG << strerror(errno);
         DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
-
+        errno = 0;
+        
         detach();
         closedSocket();
         m_sock.close();
-        delete this;
+        m_loop->addDel(this);
     }
 
 public:

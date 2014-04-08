@@ -13,7 +13,7 @@
 #include <sys/resource.h>
 
 #define BASE_PORT 7000
-#define DEFAULT_NUM 10
+#define DEFAULT_NUM 1
 
 bool set_blocking(int fd, bool block)
 {
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     addr.sin_family = AF_INET;
     inet_pton(AF_INET, ip, &addr.sin_addr);
 
-    setlimit(100000);
+    setlimit(500000);
 
     int index = 0;
     while(1)

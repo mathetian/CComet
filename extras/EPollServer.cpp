@@ -145,7 +145,7 @@ int main(int argc, char **argv)
         assert(epoll_ctl(m_epollFD, EPOLL_CTL_ADD, serv_socks[i], &ev) == 0);
     }
 
-    setlimit(100000);
+    setlimit(500000);
 
     while(1)
     {
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
             assert(imsgs.find(events[i].data.fd) != imsgs.end());
             Msg*msg = imsgs[events[i].data.fd];
             int what = events[i].events;
-
+            int fd = events[i].data.fd;
             if(msg->getType() == 1)
             {
                 if(what & (EPOLLHUP|EPOLLERR))
@@ -185,15 +185,23 @@ int main(int argc, char **argv)
 
                         while(true)
                         {
-                            int count = ::read(msg->getFD(), buf, 1024);
-                            printf("read %d\n",count);
+                            int count = ::read(fd, buf, 1024);
+                            printf("read %d %d\n",fd,count);
                             if(count < 0 && errno == EAGAIN)
                             {
                                 printf("EWouldBlock\n");
                                 break;
                             }
                             else if (count < 0) goto sock_err;
-                            else if (count == 0) assert(0);
+                            else if (count == 0)
+                            {
+                                printf("Need Closed Socket\n");
+                                assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, fd, NULL) == 0);
+                                ::close(fd);
+                                imsgs.erase(fd);
+                                delete msg; msg = NULL;
+                                break;
+                            }
                         }
                     }
                     if(what & EPOLLOUT)

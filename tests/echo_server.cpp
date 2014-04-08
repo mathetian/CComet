@@ -68,8 +68,18 @@ int main()
 {
     ::signal(SIGINT, signalStop);
     setlimit(100000);
+    errno = 0;
+    TCPAcceptor<EchoServer> acceptor0(loop, PORT+0);
+    TCPAcceptor<EchoServer> acceptor1(loop, PORT+1);
+    TCPAcceptor<EchoServer> acceptor2(loop, PORT+2);
+    TCPAcceptor<EchoServer> acceptor3(loop, PORT+3);
+    TCPAcceptor<EchoServer> acceptor4(loop, PORT+4);
+    TCPAcceptor<EchoServer> acceptor5(loop, PORT+5);
+    TCPAcceptor<EchoServer> acceptor6(loop, PORT+6);
+    TCPAcceptor<EchoServer> acceptor7(loop, PORT+7);
+    TCPAcceptor<EchoServer> acceptor8(loop, PORT+8);
+    TCPAcceptor<EchoServer> acceptor9(loop, PORT+9);
 
-    TCPAcceptor<EchoServer> acceptor(loop, PORT);
     loop.runforever();
 
     return 0;

@@ -11,7 +11,7 @@ using namespace std;
 #include "core/Socket.h"
 
 #define PORT 10000
-#define CLIENT_NUM 1000
+#define CLIENT_NUM 10000
 
 EventLoop loop;
 
@@ -77,8 +77,9 @@ private:
     {
         for(int i = 0; i < size; i++)
         {
+            NetAddress svrAddr(PORT+(i%10));
             Socket sock(AF_INET, SOCK_STREAM);
-            sock.cliConnect(psvrAddr);
+            sock.cliConnect(&svrAddr);
             assert(sock.get_fd() >= 0);
             EchoClient *client = new EchoClient(loop, sock);
         }
@@ -106,7 +107,7 @@ int main()
 {
     ::signal(SIGINT, signalStop);
     setlimit(100000);
-
+    errno = 0;
     ClientSimulator simulator(PORT);
     loop.runforever();
 

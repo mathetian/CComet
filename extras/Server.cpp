@@ -120,7 +120,7 @@ int main(int argc, char **argv)
         maxfd = serv_socks[i] > maxfd ? serv_socks[i] : maxfd;
     }
 
-    setlimit(100000);
+    setlimit(500000);
 
     while(1)
     {
