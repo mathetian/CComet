@@ -40,7 +40,6 @@ int main(int argc, char **argv)
 {
     struct sockaddr_in addr;
     const char *ip = "127.0.0.1";
-    int base_port = atoi(argv[2]);
     int opt = 1;
     int bufsize;
     socklen_t optlen;

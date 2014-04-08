@@ -103,13 +103,15 @@ sock_err:
 bool inset(int fd, vector<int> &serv_socks)
 {
     int num = serv_socks.size();
-    for(int i=0; i<num; i++)
+    for(int i=0; i<num ; i++)
     {
         if(fd == serv_socks[i])
             return true;
     }
     return false;
 }
+
+const char *str = "hello world";
 
 int main(int argc, char **argv)
 {
@@ -155,8 +157,7 @@ int main(int argc, char **argv)
             if(errno == EINTR)
                 continue;
             else
-                goto
-                sock_err;
+                goto sock_err;
         }
         if(ret == 0) continue;
         for(int i=0; i<ret; i++)
@@ -164,17 +165,16 @@ int main(int argc, char **argv)
             assert(imsgs.find(events[i].data.fd) != imsgs.end());
             Msg*msg = imsgs[events[i].data.fd];
             int what = events[i].events;
-            int fd = events[i].data.fd;
             if(msg->getType() == 1)
             {
                 if(what & (EPOLLHUP|EPOLLERR))
                 {
                     //close
                     printf("Need close %d\n", msg->getFD());
+                    assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
                     ::close(msg->getFD());
                     imsgs.erase(msg->getFD());
-                    delete msg;
-                    msg = NULL;
+                    delete msg; msg = NULL;
                 }
                 else
                 {
@@ -185,8 +185,8 @@ int main(int argc, char **argv)
 
                         while(true)
                         {
-                            int count = ::read(fd, buf, 1024);
-                            printf("read %d %d\n",fd,count);
+                            int count = ::read(msg->getFD(), buf, 1024);
+                            printf("read %d %d\n",msg->getFD(),count);
                             if(count < 0 && errno == EAGAIN)
                             {
                                 printf("EWouldBlock\n");
@@ -196,17 +196,37 @@ int main(int argc, char **argv)
                             else if (count == 0)
                             {
                                 printf("Need Closed Socket\n");
-                                assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, fd, NULL) == 0);
-                                ::close(fd);
-                                imsgs.erase(fd);
+                                assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
+                                ::close(msg->getFD());
+                                imsgs.erase(msg->getFD());
                                 delete msg; msg = NULL;
                                 break;
+                            }
+                            else
+                            {
+                                printf("%s\n", buf);       
                             }
                         }
                     }
                     if(what & EPOLLOUT)
                     {
                         //Todo list
+                        int ret = ::write(msg->getFD(), str, strlen(str));
+                        if(ret < 0 && errno == EAGAIN)
+                        {
+                            struct epoll_event ev = {0, {0}};
+                            ev.data.fd = msg->getFD();
+                            ev.events  = EPOLLIN | EPOLLET;
+                            assert(epoll_ctl(m_epollFD, EPOLL_CTL_MOD, msg->getFD(), &ev) == 0);
+                        }
+                        else if(ret < 0) goto sock_err;
+                        else
+                        { 
+                            struct epoll_event ev = {0, {0}};
+                            ev.data.fd = msg->getFD();
+                            ev.events  = EPOLLIN | EPOLLET;
+                            assert(epoll_ctl(m_epollFD, EPOLL_CTL_MOD, msg->getFD(), &ev) == 0);
+                        }
                     }
                 }
             }
