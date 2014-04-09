@@ -52,7 +52,11 @@ public:
         if(event == -1)
         {
             DEBUG << "found Close Event(triggered by detach), fd: " << fd;
-            assert(epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, NULL) == 0);
+            if(epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, NULL) != 0)
+            {
+                printf("error = %s, %d\n", strerror(errno), fd);
+                assert(0);
+            }
             handler->setdelflag();
             return;
         }

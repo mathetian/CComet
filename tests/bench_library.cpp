@@ -15,7 +15,7 @@ int num_pipes, num_active, num_writes;
 class EchoServer;
 
 vector<Socket> pipes;
-vector<EchoServer> servers;
+vector<EchoServer*> servers;
 
 EventLoop loop;
 
@@ -23,7 +23,9 @@ class EchoServer : public MSGHandler
 {
 public:
     EchoServer(EventLoop& loop, Socket sock, int idx) : MSGHandler(loop, sock, 1), idx(idx)
-    { } 
+    { 
+        printf("EchoServer %d %d\n",sock.get_fd(), idx);
+    } 
 
     void clear()
     {
@@ -37,26 +39,26 @@ private:
         {
             INFO << "Received: " << (string)buf << " through fd " << m_sock.get_fd();
             count += buf.length();
+            INFO << count ;
             if (writes > 0) 
             {
                 int widx = idx + 1;
                 if (widx >= num_pipes) widx -= num_pipes;
-                ::send(pipes[2 * widx + 1].get_fd(), "m", 1, 0);
+                ::write(pipes[2 * widx + 1].get_fd(), "m", 1);
                 writes--;
                 fired++;
             }
 
-            if (fired == count) loop.stop();
+            if (fired == count) loop.stop(2);
         }
     }
 
     virtual void onCloseSocket(int st)
     {
-        if(errno != 0) DEBUG << strerror(errno);
-        errno = 0;
-        
-        detach(); closedSocket();
-        m_loop->addDel(this);
+        if(errno != 0) 
+            DEBUG << strerror(errno);
+        errno = 0;    
+        DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
     }
 
 private:
@@ -69,16 +71,17 @@ void run_once()
 
     int space = num_pipes / num_active;
     space *= 2;
-    
     for (int i = 0; i < num_active; i++)
-        ::send(pipes[i * space + 1].get_fd(), "m", 1, 0);
+        ::write(pipes[i*space+1].get_fd(),"m",1);
 
+    if(errno != 0) printf("error: %s\n",strerror(errno));
+    
     fired  = num_active;
     count  = 0;
     writes = num_writes;
 
     TimeStamp before = TimeStamp::now();
-
+    printf("%s\n", "runforever");
     loop.runforever();
     TimeStamp end = TimeStamp::now();
 
@@ -100,7 +103,7 @@ int setlimit(int num_pipes)
 int main(int argc, char* argv[]) 
 {
     num_pipes  = 100000;
-    num_active = 100;
+    num_active = 1000;
     num_writes = num_pipes;
 
     setlimit(num_pipes);
@@ -114,12 +117,12 @@ int main(int argc, char* argv[])
     }
 
     for (int i = 0; i < num_pipes; i++) 
-        servers.push_back(EchoServer(loop, pipes[i*2],i));
+        servers.push_back(new EchoServer(loop, pipes[i*2],i));
 
     for (int i = 0; i < 25; i++) 
     {
         run_once();
         fprintf(stdout, "writes=%d, fired=%d, recv=%d\n", writes, fired, count);
-        for(int i=0;i<num_pipes;i++) servers[i].clear();
+        for(int i=0;i<num_pipes;i++) servers[i]->clear();
     }
 }

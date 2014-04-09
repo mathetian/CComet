@@ -7,6 +7,7 @@ src/core/Selector
 src/core/MsgHandler
 src/core/Socket
 src/core/SocketHandler
+src/utils/Log
 extras/Client
 extras/EPollServer
 extras/Server

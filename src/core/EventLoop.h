@@ -11,7 +11,7 @@ using namespace std;
 class EventLoop
 {
     map<int, SocketHandler*> m_map;
-    bool   m_quitFlag;
+    int   m_quitFlag;
     Selector *m_selector;
 
     vector<SocketHandler*> m_del;
@@ -35,15 +35,20 @@ public:
 
     void runforever()
     {
-        m_quitFlag = 0;
+        m_quitFlag = 0; 
         while (!m_quitFlag) run_once();
+
+        if(m_quitFlag==2) return; // add for benchmark
         map<int,SocketHandler*>::iterator iter = m_map.begin();
         for(; iter!=m_map.end(); iter++)
         {
             SocketHandler *handler = (*iter).second;
+            INFO << handler->getSocket().get_fd();
             m_selector->unRegisterEvent(handler, -1);
             handler->onCloseSocket(CLSSIG);
         }
+
+        m_map.clear();
     }
 
     void run_once()
@@ -51,9 +56,10 @@ public:
         m_selector->dispatch();
     }
 
-    void stop()
+    void stop(int flag=1)
     {
-        m_quitFlag = 1;
+        m_quitFlag = flag;
+        INFO << "stop" << flag << " " << m_quitFlag;
     }
 
     void attachHandler(int fd, SocketHandler *p)
@@ -104,7 +110,6 @@ public:
     {
         assert(m_map.find(fd) != m_map.end());
         SocketHandler *handler = m_map[fd];
-
         if((type & EPOLLRDHUP) || (type & EPOLLERR) || (type & EPOLLHUP))
         {
             m_selector->unRegisterEvent(handler, -1);
@@ -120,7 +125,6 @@ public:
             handler->onCloseSocket(CLSEVT);
             return;
         }
-
         if(handler->getdelflag() == 1) return;
         if((type & EPOLLOUT) != 0)
         {
@@ -130,7 +134,6 @@ public:
         if(handler->getdelflag() == 1) return;
         if((type & EPOLLIN) != 0)
             handler->onReceiveMsg();
-        
     }
 
     void addDel(SocketHandler*handler)
@@ -142,12 +145,12 @@ public:
     {
         DEBUG << "Need Destory " << m_del.size() << " Objects";
 
-        // for(int i=0;i<m_del.size();i++)
-        // {
-        //     SocketHandler *handler = m_del[i];
-        //     if(handler) delete handler; 
-        //     handler = NULL;
-        // }
+        for(int i=0;i<m_del.size();i++)
+        {
+            SocketHandler *handler = m_del[i];
+            if(handler) delete handler; 
+            handler = NULL;
+        }
         vector<SocketHandler*> handlers;
         swap(handlers, m_del);
     }
