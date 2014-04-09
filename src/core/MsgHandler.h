@@ -16,18 +16,21 @@ using namespace utils;
 class MSGHandler : public SocketHandler
 {
 public:
-    MSGHandler(EventLoop& loop, Socket sock) : SocketHandler(loop)
+    MSGHandler(EventLoop& loop, Socket sock, int first=0) : SocketHandler(loop), first(first)
     {
         m_sock = sock;
         attach();
         registerRead();
+        if(first==0)
+        registerWrite();
     }
 
 public:
     int write(const Buffer& buf)
     {
         m_Bufs.push_back(buf);
-        onSendMsg();
+        registerWrite();
+        //onSendMsg();
     }
 
     int close()
@@ -56,6 +59,24 @@ private:
 
     virtual void onSendMsg()
     {
+        if(first == 0)
+        {
+            int       error = 0; 
+            socklen_t errlen = sizeof(error);
+            assert(getsockopt(m_sock.get_fd(), SOL_SOCKET, SO_ERROR, (void *)&error, &errlen) == 0);
+            if(error != 0)
+            {
+                DEBUG << strerror(error);
+                onCloseSocket(CLSWRR);
+            }
+            else 
+            {
+                first = 1;
+                onConnected(SUCC);
+            }
+            return;
+        }
+        
         while(m_Bufs.size() > 0)
         {
             Buffer buf = m_Bufs.front();
@@ -83,7 +104,7 @@ private:
 public:
     virtual void onCloseSocket(int st)
     {
-        DEBUG << strerror(errno);
+        if(errno != 0) DEBUG << strerror(errno);
         DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
         errno = 0;
         
@@ -97,9 +118,11 @@ public:
     virtual void receivedMsg(STATUS status, Buffer &buf) { }
     virtual void sendedMsg(STATUS status, int len, int targetLen) { }
     virtual void closedSocket()              { }
+    virtual void onConnected(STATUS status)  { }
 
 private:
     list<Buffer>   m_Bufs;
+    int            first;
 };
 
 #endif

@@ -10,15 +10,17 @@ using namespace std;
 #include "core/Socket.h"
 #include "core/Acceptor.h"
 
-#define PORT 10000
+#define PORT 9000
 
 EventLoop loop;
 
 class EchoServer : public MSGHandler
 {
 public:
-    EchoServer(EventLoop& loop, Socket sock) : MSGHandler(loop, sock)
-    { }
+    EchoServer(EventLoop& loop, Socket sock) : MSGHandler(loop, sock,1)
+    { 
+        //write("wait for me");
+    }
 
     ~EchoServer()
     { }

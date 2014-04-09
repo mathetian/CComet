@@ -108,19 +108,29 @@ public:
         if((type & EPOLLRDHUP) || (type & EPOLLERR) || (type & EPOLLHUP))
         {
             m_selector->unRegisterEvent(handler, -1);
+            INFO << fd << " " << (type&EPOLLRDHUP) << " " << (type&EPOLLERR) << " " << (type&EPOLLHUP);
+
+            int       error = 0;
+            socklen_t errlen = sizeof(error);
+            if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (void *)&error, &errlen) == 0)
+            {
+                printf("error = %s\n", strerror(error));
+            }
+
             handler->onCloseSocket(CLSEVT);
             return;
         }
 
-        if(handler->getdelflag() == 1) return;
-        if((type & EPOLLIN) != 0)
-            handler->onReceiveMsg();
         if(handler->getdelflag() == 1) return;
         if((type & EPOLLOUT) != 0)
         {
             m_selector->unRegisterEvent(handler, EPOLLOUT);
             handler->onSendMsg();
         }
+        if(handler->getdelflag() == 1) return;
+        if((type & EPOLLIN) != 0)
+            handler->onReceiveMsg();
+        
     }
 
     void addDel(SocketHandler*handler)

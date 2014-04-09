@@ -10,8 +10,9 @@ using namespace std;
 #include "core/MsgHandler.h"
 #include "core/Socket.h"
 
-#define PORT 10000
+#define PORT 9000
 #define CLIENT_NUM 10000
+#define PORTNUM 1
 
 EventLoop loop;
 
@@ -20,7 +21,7 @@ class EchoClient : public MSGHandler
 public:
     EchoClient(EventLoop& loop, Socket sock) : MSGHandler(loop, sock)
     {
-        write("wait for me");
+        DEBUG << m_sock.getsockname() << " " << sock.get_fd();
     }
 
     ~EchoClient()
@@ -45,6 +46,12 @@ protected:
 
     virtual void closedSocket()
     { }
+
+    virtual void onConnected(STATUS status)
+    {
+        INFO << "Connected Successful";
+        write("wait for me");
+    }
 };
 
 class ClientSimulator
@@ -77,11 +84,17 @@ private:
     {
         for(int i = 0; i < size; i++)
         {
-            NetAddress svrAddr(PORT+(i%10));
+            NetAddress svrAddr(PORT+(i%PORTNUM));
             Socket sock(AF_INET, SOCK_STREAM);
             sock.cliConnect(&svrAddr);
             assert(sock.get_fd() >= 0);
             EchoClient *client = new EchoClient(loop, sock);
+            if(i%10000==0) 
+            {   
+                printf("press Enter to continue: ");
+                getchar();
+            }
+            usleep(1 * 1000);
         }
     }
 };
