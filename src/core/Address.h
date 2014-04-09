@@ -22,7 +22,7 @@ protected:
 public:
     Address() {}
 
-    Address(const void *addr, socklen_t len) : m_addr(static_cast<const char *>(addr), len)
+    Address(const void *addr, socklen_t len) : m_addr(static_cast<const char*>(addr), len)
     { }
 
     const sockaddr *data() const

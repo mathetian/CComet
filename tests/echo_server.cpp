@@ -19,7 +19,6 @@ class EchoServer : public MSGHandler
 public:
     EchoServer(EventLoop& loop, Socket sock) : MSGHandler(loop, sock,1)
     { 
-        //write("wait for me");
     }
 
     ~EchoServer()

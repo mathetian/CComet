@@ -32,8 +32,11 @@ comet: src/ccomet/Server.cpp src/ccomet/Subscriber.cpp src/ccomet/CComet.cpp src
 EPollServer: extras/EPollServer.cpp
 	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
 
+bench_library: tests/bench_library.cpp src/utils/Log.cpp
+	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
+
 prepare:
 	mkdir bin
 
 clean: 
-	-rm -rf bin comet
+	-rm -rf bin comet bench*

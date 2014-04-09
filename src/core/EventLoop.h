@@ -35,8 +35,8 @@ public:
 
     void runforever()
     {
-        while (!m_quitFlag)
-            run_once();
+        m_quitFlag = 0;
+        while (!m_quitFlag) run_once();
         map<int,SocketHandler*>::iterator iter = m_map.begin();
         for(; iter!=m_map.end(); iter++)
         {
@@ -142,12 +142,12 @@ public:
     {
         DEBUG << "Need Destory " << m_del.size() << " Objects";
 
-        for(int i=0;i<m_del.size();i++)
-        {
-            SocketHandler *handler = m_del[i];
-            if(handler) delete handler; 
-            handler = NULL;
-        }
+        // for(int i=0;i<m_del.size();i++)
+        // {
+        //     SocketHandler *handler = m_del[i];
+        //     if(handler) delete handler; 
+        //     handler = NULL;
+        // }
         vector<SocketHandler*> handlers;
         swap(handlers, m_del);
     }

@@ -146,6 +146,12 @@ public:
         return NetAddress(buf, len);
     }
 
+    static pair<Socket, Socket> pipe() 
+    {
+        int fds[2]; ::pipe(fds);
+        return pair<Socket, Socket>(Socket(fds[0]), Socket(fds[1]));
+    }
+
 private:
     bool connect(const Address *paddr)
     {

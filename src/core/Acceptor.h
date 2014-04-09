@@ -50,7 +50,6 @@ private:
 
         detach();
         m_sock.close();
-       // delete this;
     }
 };
 
