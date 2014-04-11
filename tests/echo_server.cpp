@@ -10,7 +10,7 @@ using namespace std;
 #include "core/Socket.h"
 #include "core/Acceptor.h"
 
-#define PORT 9000
+#define BASE_PORT 10000
 
 EventLoop loop;
 
@@ -73,7 +73,7 @@ int main()
     TCPAcceptor<EchoServer> acceptors[10];
 
     for(int i = 0;i < 10;i++)
-        acceptors[i] = TCPAcceptor<EchoServer>(&loop, PORT+i);
+        acceptors[i] = TCPAcceptor<EchoServer>(&loop, BASE_PORT+i);
 
     loop.runforever();
 

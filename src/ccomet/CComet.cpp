@@ -15,7 +15,7 @@ using namespace std;
 #include "Server.h"
 #include "HttpInstance.h"
 
-#define PORT 10001
+#define BASE_PORT 10000
 
 EventLoop loop;
 Server    server;
@@ -101,7 +101,7 @@ int main()
     TCPAcceptor<HttpInstance> acceptors[10];
 
     for(int i = 0;i < 10;i++)
-        acceptors[i] = TCPAcceptor<HttpInstance>(&loop, PORT+i);
+        acceptors[i] = TCPAcceptor<HttpInstance>(&loop, BASE_PORT+i);
 
     loop.runforever();
 

@@ -12,10 +12,11 @@ using namespace std;
 
 #include <stdlib.h>
 
-#define PORT 10001
+#define BASE_PORT 10000
+#define PORT_NUM  10
+
 #define CLIENT_NUM 1000000
 #define SUBCLI     1000
-#define PORTNUM 1
 
 EventLoop loop;
 int num;
@@ -40,7 +41,7 @@ protected:
 
             if(num++ < CLIENT_NUM)
             {   
-                NetAddress svrAddr(PORT+(rand()%10));
+                NetAddress svrAddr(BASE_PORT+(rand()%PORT_NUM));
                 Socket sock(AF_INET, SOCK_STREAM);
                 sock.cliConnect(&svrAddr);
                 assert(sock.get_fd() >= 0);
@@ -107,7 +108,7 @@ private:
         num = SUBCLI;
         for(int i=0;i<SUBCLI;i++)
         {
-            NetAddress svrAddr(PORT + (rand()%10));
+            NetAddress svrAddr(BASE_PORT + (rand()%PORT_NUM));
             Socket sock(AF_INET, SOCK_STREAM);
             sock.cliConnect(&svrAddr);
             assert(sock.get_fd() >= 0);
@@ -139,7 +140,7 @@ int main()
     ::signal(SIGINT, signalStop);
     setlimit(100000);
     errno = 0;
-    ClientSimulator simulator(PORT);
+    ClientSimulator simulator(BASE_PORT);
     loop.runforever();
 
     return 0;
