@@ -23,7 +23,7 @@ client: tests/echo_client.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
 
-ccomet: clean prepare comet bench_comet2
+ccomet: clean prepare comet bench_comet
 
 comet: src/ccomet/Server.cpp src/ccomet/Subscriber.cpp src/ccomet/CComet.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
@@ -35,11 +35,7 @@ EPollServer: extras/EPollServer.cpp
 bench_library: tests/bench_library.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 
-bench_comet: tests/bench_comet.cpp
-	cc -o $@ $^ -L/usr/local/lib/ -Wall -O2 -I/usr/local/include -ggdb -levent 
-	mv $@ bin
-
-bench_comet2: tests/bench_comet2.cpp src/utils/Log.cpp
+bench_comet: tests/bench_comet.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
 

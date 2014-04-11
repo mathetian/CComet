@@ -17,7 +17,7 @@ using namespace utils;
 class HttpInstance :public MSGHandler
 {
 public:
-    HttpInstance(EventLoop& loop, Socket sock) : MSGHandler(loop, sock), errcode(0), clsStatus(0) { }
+    HttpInstance(EventLoop *loop, Socket sock) : MSGHandler(loop, sock), errcode(0), clsStatus(0) { }
 
 public:
     virtual void receivedMsg(STATUS status, Buffer &buf);//in `ccomet.cpp`
@@ -47,7 +47,6 @@ private:
             return;
         }
         string msg = str.substr(i,j-i);
-        printf("msg:%s\n",msg.c_str());
         if(msg!="GET")
         {
             errcode = 1;
@@ -63,7 +62,6 @@ private:
             errcode = 1;
             return;
         }
-        printf("msg:%s\n",msg.c_str());
         
         msg = str.substr(i+1,j-i-1);
         parseSub(msg);

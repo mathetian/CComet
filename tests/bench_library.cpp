@@ -22,7 +22,7 @@ EventLoop loop;
 class EchoServer : public MSGHandler
 {
 public:
-    EchoServer(EventLoop& loop, Socket sock, int idx) : MSGHandler(loop, sock, 1), idx(idx)
+    EchoServer(EventLoop *loop, Socket sock, int idx) : MSGHandler(loop, sock, 1), idx(idx)
     { 
         printf("EchoServer %d %d\n",sock.get_fd(), idx);
     } 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     }
 
     for (int i = 0; i < num_pipes; i++) 
-        servers.push_back(new EchoServer(loop, pipes[i*2],i));
+        servers.push_back(new EchoServer(&loop, pipes[i*2],i));
 
     for (int i = 0; i < 25; i++) 
     {

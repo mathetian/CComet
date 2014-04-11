@@ -16,7 +16,7 @@ using namespace utils;
 class MSGHandler : public SocketHandler
 {
 public:
-    MSGHandler(EventLoop& loop, Socket sock, int first=0) : SocketHandler(loop), first(first)
+    MSGHandler(EventLoop* loop, Socket sock, int first=0) : SocketHandler(loop), first(first)
     {
         m_sock = sock;
         attach();

@@ -10,7 +10,8 @@ template<class T>
 class TCPAcceptor : public SocketHandler
 {
 public:
-    TCPAcceptor(EventLoop& _loop, int localport) : SocketHandler(_loop)
+    TCPAcceptor() : SocketHandler(NULL) { }
+    TCPAcceptor(EventLoop* _loop, int localport) : SocketHandler(_loop), ip(""), port(localport)
     {
         NetAddress addr = NetAddress(localport);
         m_sock = TCPSocket(&addr);
@@ -21,12 +22,24 @@ public:
         INFO << m_sock.getsockname() ;
     }
 
-    TCPAcceptor(EventLoop& _loop, string ip, int localport) : SocketHandler(_loop)
+    TCPAcceptor(EventLoop* _loop, string ip, int localport) : SocketHandler(_loop), ip(""), port(localport)
     {
         NetAddress addr = NetAddress(ip,localport);
         m_sock = TCPSocket(&addr);
         attach();
         registerRead();
+        assert(m_sock.get_fd() >= 0);
+        INFO << "TCPAcceptor Initialization" ;
+        INFO << m_sock.getsockname() ;
+    }
+
+    TCPAcceptor<T> & operator=(const TCPAcceptor<T> acceptor)
+    {
+        m_loop = acceptor.m_loop; 
+        NetAddress addr = (acceptor.ip.size() == 0) ? NetAddress(acceptor.port) : NetAddress(acceptor.ip, acceptor.port);
+      
+        m_sock = TCPSocket(&addr);
+        attach(); registerRead();
         assert(m_sock.get_fd() >= 0);
         INFO << "TCPAcceptor Initialization" ;
         INFO << m_sock.getsockname() ;
@@ -39,7 +52,7 @@ private:
         TCPSocket sock = m_sock.accept(&a);
         DEBUG << "New Connection: " << sock.get_fd() << " " << sock.getpeername();
         if (sock.get_fd() >= 0)
-            T* t = new T(*getLoop(), sock);
+            T* t = new T(getLoop(), sock);
     }
 
     void onSendMsg() { }
@@ -51,6 +64,9 @@ private:
         detach();
         m_sock.close();
     }
+
+private:
+    string ip; int port;
 };
 
 #endif

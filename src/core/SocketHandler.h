@@ -14,9 +14,9 @@ protected:
     int         m_delflag;
 
 public:
-    SocketHandler(EventLoop& loop) : m_loop(&loop)
+    SocketHandler(EventLoop* loop) : m_loop(loop)
     {
-        m_status = 0;
+        m_status  = 0;
         m_delflag = 0;
     }
 

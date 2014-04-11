@@ -19,7 +19,7 @@ EventLoop loop;
 class EchoClient : public MSGHandler
 {
 public:
-    EchoClient(EventLoop& loop, Socket sock) : MSGHandler(loop, sock)
+    EchoClient(EventLoop *loop, Socket sock) : MSGHandler(loop, sock)
     {
         DEBUG << m_sock.getsockname() << " " << sock.get_fd();
     }
@@ -88,7 +88,7 @@ private:
             Socket sock(AF_INET, SOCK_STREAM);
             sock.cliConnect(&svrAddr);
             assert(sock.get_fd() >= 0);
-            EchoClient *client = new EchoClient(loop, sock);
+            EchoClient *client = new EchoClient(&loop, sock);
             if(i%10000==0) 
             {   
                 printf("press Enter to continue: ");

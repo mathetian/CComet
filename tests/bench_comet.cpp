@@ -13,15 +13,17 @@ using namespace std;
 #include <stdlib.h>
 
 #define PORT 10001
-#define CLIENT_NUM 10000
+#define CLIENT_NUM 1000000
+#define SUBCLI     1000
 #define PORTNUM 1
 
 EventLoop loop;
+int num;
 
 class EchoClient : public MSGHandler
 {
 public:
-    EchoClient(EventLoop& loop, Socket sock) : MSGHandler(loop, sock)
+    EchoClient(EventLoop* loop, Socket sock) : MSGHandler(loop, sock)
     {
         DEBUG << m_sock.getsockname() << " " << sock.get_fd();
     }
@@ -35,6 +37,24 @@ protected:
         if(status == SUCC)
         {
             INFO << "ReceivedMsg: " << (string)buf << " through fd " << m_sock.get_fd();
+
+            if(num++ < CLIENT_NUM)
+            {   
+                NetAddress svrAddr(PORT+(rand()%10));
+                Socket sock(AF_INET, SOCK_STREAM);
+                sock.cliConnect(&svrAddr);
+                assert(sock.get_fd() >= 0);
+
+                EchoClient *client = new EchoClient(&loop, sock);
+               
+                usleep(1 * 1000);
+
+                if(num % 10000 == 0)
+                {
+                    printf("%d, press Enter to continue: ", num);
+                    getchar();
+                }
+            }
         }
     }
 
@@ -52,7 +72,6 @@ protected:
     {
         INFO << "Connected Successful"; char buf[1024];
         sprintf(buf, "GET /sign?channel=%s%d&sname=%d&callback=%s SSS", "channelname", rand()%10000, rand(), "callback");
-        printf("%s\n", buf);
         write(buf);
     }
 };
@@ -85,20 +104,14 @@ public:
 private:
     void createClients(Address *psvrAddr, int size)
     {
-        int i=0;
-        while(i<CLIENT_NUM)
+        num = SUBCLI;
+        for(int i=0;i<SUBCLI;i++)
         {
-            i++;
-            NetAddress svrAddr(PORT);
+            NetAddress svrAddr(PORT + (rand()%10));
             Socket sock(AF_INET, SOCK_STREAM);
             sock.cliConnect(&svrAddr);
             assert(sock.get_fd() >= 0);
-            EchoClient *client = new EchoClient(loop, sock);
-            if(i%1000==0) 
-            {   
-                printf("press Enter to continue: ");
-                getchar();
-            }
+            EchoClient *client = new EchoClient(&loop, sock);
             usleep(1 * 1000);
         }
     }

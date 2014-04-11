@@ -97,7 +97,12 @@ int setlimit(int num_pipes)
 int main()
 {
     setlimit(100000);
-    TCPAcceptor<HttpInstance> acceptor(loop, PORT);
+
+    TCPAcceptor<HttpInstance> acceptors[10];
+
+    for(int i = 0;i < 10;i++)
+        acceptors[i] = TCPAcceptor<HttpInstance>(&loop, PORT+i);
+
     loop.runforever();
 
     return 0;
