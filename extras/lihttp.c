@@ -22,7 +22,7 @@ int main(int argc, char **argv){
     struct evhttp_request *req;
 
     base = event_base_new();
-    conn = evhttp_connection_base_new(base, NULL, "127.0.0.1", 8080);
+    conn = evhttp_connection_base_new(base, NULL, "127.0.0.1", 8000);
     req = evhttp_request_new(http_request_done, base);
 
     evhttp_add_header(req->output_headers, "Host", "localhost");

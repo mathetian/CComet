@@ -47,6 +47,7 @@ private:
             return;
         }
         string msg = str.substr(i,j-i);
+        printf("msg:%s\n",msg.c_str());
         if(msg!="GET")
         {
             errcode = 1;
@@ -62,6 +63,8 @@ private:
             errcode = 1;
             return;
         }
+        printf("msg:%s\n",msg.c_str());
+        
         msg = str.substr(i+1,j-i-1);
         parseSub(msg);
     }

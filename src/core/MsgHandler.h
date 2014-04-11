@@ -29,8 +29,8 @@ public:
     int write(const Buffer& buf)
     {
         m_Bufs.push_back(buf);
-        registerWrite();
-        //onSendMsg();
+        //registerWrite();
+        onSendMsg();
     }
 
     int close()

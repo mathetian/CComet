@@ -9,10 +9,13 @@ using namespace utils;
 #include <map>
 using namespace std;
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
 #include "Server.h"
 #include "HttpInstance.h"
 
-#define PORT 10000
+#define PORT 10001
 
 EventLoop loop;
 Server    server;
@@ -80,8 +83,20 @@ void HttpInstance::closedSocket()
     else /**by server**/ { }
 }
 
+int setlimit(int num_pipes)
+{
+    struct rlimit rl;
+    rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
+    if (::setrlimit(RLIMIT_NOFILE, &rl) == -1)
+    {
+        fprintf(stderr, "setrlimit error: %s", strerror(errno));
+        return 1;
+    }
+}
+
 int main()
 {
+    setlimit(100000);
     TCPAcceptor<HttpInstance> acceptor(loop, PORT);
     loop.runforever();
 
