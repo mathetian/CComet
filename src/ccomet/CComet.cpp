@@ -16,6 +16,7 @@ using namespace std;
 #include "HttpInstance.h"
 
 #define BASE_PORT 10000
+#define PORT_NUM  10
 
 EventLoop loop;
 Server    server;
@@ -78,7 +79,7 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
 void HttpInstance::closedSocket()
 {
     INFO << "HttpInstance closedSocket: " << clsStatus;
-    if(clsStatus == 0) /**by peer**/
+    if(clsStatus == 0 && subscriber) /**by peer**/
         subscriber->close();
     else /**by server**/ { }
 }
@@ -98,12 +99,17 @@ int main()
 {
     setlimit(100000);
 
-    TCPAcceptor<HttpInstance> acceptors[10];
+    vector<TCPAcceptor<HttpInstance>*> acceptors(PORT_NUM,NULL);
 
-    for(int i = 0;i < 10;i++)
-        acceptors[i] = TCPAcceptor<HttpInstance>(&loop, BASE_PORT+i);
+    for(int i = 0;i < PORT_NUM;i++)
+        acceptors[i] = new TCPAcceptor<HttpInstance>(&loop, BASE_PORT+i);
 
     loop.runforever();
+
+    for(int i = 0;i < PORT_NUM;i++)
+    {
+        delete acceptors[i]; acceptors[i] = NULL;
+    }
 
     return 0;
 }

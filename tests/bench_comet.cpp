@@ -15,11 +15,13 @@ using namespace std;
 #define BASE_PORT 10000
 #define PORT_NUM  10
 
-#define CLIENT_NUM 1000000
+#define CLIENT_NUM 10000000
 #define SUBCLI     1000
 
 EventLoop loop;
 int num;
+
+int globalid=0;
 
 class EchoClient : public MSGHandler
 {
@@ -29,8 +31,7 @@ public:
         DEBUG << m_sock.getsockname() << " " << sock.get_fd();
     }
 
-    ~EchoClient()
-    { }
+    ~EchoClient() { }
 
 protected:
     virtual void receivedMsg(STATUS status, Buffer &buf)
@@ -38,6 +39,14 @@ protected:
         if(status == SUCC)
         {
             INFO << "ReceivedMsg: " << (string)buf << " through fd " << m_sock.get_fd();
+        }
+    }
+
+    virtual void sendedMsg(STATUS status, int len, int targetLen)
+    {
+        if(status == SUCC)
+        {
+            INFO << "SendedMsg: " << len << " " << targetLen << " through fd " << m_sock.get_fd();
 
             if(num++ < CLIENT_NUM)
             {   
@@ -59,20 +68,13 @@ protected:
         }
     }
 
-    virtual void sendedMsg(STATUS status, int len, int targetLen)
-    {
-        if(status == SUCC)
-        {
-            INFO << "SendedMsg: " << len << " " << targetLen << " through fd " << m_sock.get_fd();
-        }
-    }
-
     virtual void closedSocket() { }
 
     virtual void onConnected(STATUS status)
     {
         INFO << "Connected Successful"; char buf[1024];
-        sprintf(buf, "GET /sign?channel=%s%d&sname=%d&callback=%s SSS", "channelname", rand()%10000, rand(), "callback");
+        sprintf(buf, "GET /sign?channel=%s%d&sname=%d&callback=%s SSS", "channelname", rand()%10000, globalid, "callback");
+        globalid++;
         write(buf);
     }
 };

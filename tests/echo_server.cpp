@@ -10,7 +10,8 @@ using namespace std;
 #include "core/Socket.h"
 #include "core/Acceptor.h"
 
-#define BASE_PORT 10000
+#define BASE_PORT 10001
+#define PORT_NUM  10
 
 EventLoop loop;
 
@@ -18,8 +19,7 @@ class EchoServer : public MSGHandler
 {
 public:
     EchoServer(EventLoop *loop, Socket sock) : MSGHandler(loop, sock,1)
-    { 
-    }
+    { }
 
     ~EchoServer()
     { }
@@ -32,7 +32,6 @@ private:
             INFO << "Received: " << (string)buf << " through fd " << m_sock.get_fd();
             write(buf);
         }
-
     }
 
     virtual void sendedMsg(STATUS status, int len, int targetLen)
@@ -70,10 +69,10 @@ int main()
     ::signal(SIGINT, signalStop);
     setlimit(100000);
     errno = 0;
-    TCPAcceptor<EchoServer> acceptors[10];
+    vector<TCPAcceptor<EchoServer>*> acceptors(PORT_NUM, NULL);
 
-    for(int i = 0;i < 10;i++)
-        acceptors[i] = TCPAcceptor<EchoServer>(&loop, BASE_PORT+i);
+    for(int i = 0;i < PORT_NUM;i++)
+        acceptors[i] = new TCPAcceptor<EchoServer>(&loop, BASE_PORT+i);
 
     loop.runforever();
 

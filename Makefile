@@ -11,17 +11,17 @@ SOURCES = src/core/*.cpp
 
 tests = test_squeue test_buffer test_callback test_log test_slice test_tostring
 
-BENCHS = bench_comet bench_c100k bench_library
+BENCHS = bench_comet bench_c100k
 
-PROGS  = server client comet ${BENCHS}
+PROGS  = echo_server echo_client comet ${BENCHS}
 
 all: clean prepare ${PROGS}
 
-server: tests/echo_server.cpp src/utils/Log.cpp
+echo_server: tests/echo_server.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
 
-client: tests/echo_client.cpp src/utils/Log.cpp
+echo_client: tests/echo_client.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin
 
@@ -29,10 +29,6 @@ comet: src/ccomet/Server.cpp src/ccomet/Subscriber.cpp src/ccomet/CComet.cpp src
 	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
 	mv $@ bin
 
-bench_library: tests/bench_library.cpp src/utils/Log.cpp
-	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
-	mv $@ bin
-	
 bench_comet: tests/bench_comet.cpp src/utils/Log.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
 	mv $@ bin

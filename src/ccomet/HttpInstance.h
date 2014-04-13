@@ -17,7 +17,7 @@ using namespace utils;
 class HttpInstance :public MSGHandler
 {
 public:
-    HttpInstance(EventLoop *loop, Socket sock) : MSGHandler(loop, sock), errcode(0), clsStatus(0) { }
+    HttpInstance(EventLoop *loop, Socket sock) : MSGHandler(loop, sock), errcode(0), clsStatus(0), subscriber(NULL) { }
 
 public:
     virtual void receivedMsg(STATUS status, Buffer &buf);//in `ccomet.cpp`
@@ -27,6 +27,7 @@ public:
     void    setStatus()
     {
         clsStatus = 1;
+        INFO << clsStatus;
     }
 
     void    addSubscriber(Subscriber *const subscriber)

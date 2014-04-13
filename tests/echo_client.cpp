@@ -10,10 +10,10 @@ using namespace std;
 #include "core/MsgHandler.h"
 #include "core/Socket.h"
 
-#define BASE_PORT 9000
+#define BASE_PORT 10001
 #define PORT_NUM  10
 
-#define CLIENT_NUM 10000
+#define CLIENT_NUM 1000
 
 EventLoop loop;
 

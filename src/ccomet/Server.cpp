@@ -13,6 +13,10 @@ int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
 
     Channel     *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
+
+    instance->setStatus();// just for test
+    return SUCCEEED; // just for test
+    
     string msg = channel->formatStr(keys,"SIGN");
     channel->send(msg);
 
