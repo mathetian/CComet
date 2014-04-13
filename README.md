@@ -53,42 +53,30 @@ Demux    :   EPoll
 Phy-Mem  :   3888 MB
 ```
 
-| Active Connections | VIRT  | RES   |
-
-| -----------        | ----- | ----- |
-
-| 1000               |       |       |
-
-| 5000               |       |       |
-
-| 10000              |       |       |   
-
-| 50000              |       |       |
-
-| 100000             |       |       |
 
 1. First, we have tested the stability of our system. We will simulate one situation, different users connect to the server and after a short of period, they will be disconnected by themselves or by the server. At the same time, the total number of active connections won't be changed dynamically.
 
-
-
 2. Basic Test for huge connection. 
 
-|Connections         | VIRT  | RES   |
+| Active-Connection  | VIRT  | RES   |
+| -----------        | ----  | ---   | 
+| 1000               |       |       |
+| 5000               |       |       |
+| 10000              |       |       |   
+| 50000              |       |       |
+| 100000             |       |       |
 
-| -----------        | ----- | ----- | 
 
-| 0                  | 24M \  |  8M   |
-
+| Connections        | VIRT  | RES   |
+| -----------        | ----  | ---   | 
+| 0                  | 24M   |  8M   |
 | 10000              | 33M   |  10M  | 
-
 | 50000              | 60M   |  36M  | 
-
 | 100000             | 106M  |  81M  |  
-
 | 200000             | 210M  |  162M | 
 
 0.92 KB per connection `?`
-                                        
+
 ## Bugs
 
 There are many bugs in the project.
