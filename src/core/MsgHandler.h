@@ -22,7 +22,7 @@ public:
         attach();
         registerRead();
         if(first==0)
-        registerWrite();
+            registerWrite();
     }
 
 public:
@@ -61,7 +61,7 @@ private:
     {
         if(first == 0)
         {
-            int       error = 0; 
+            int       error = 0;
             socklen_t errlen = sizeof(error);
             assert(getsockopt(m_sock.get_fd(), SOL_SOCKET, SO_ERROR, (void *)&error, &errlen) == 0);
             if(error != 0)
@@ -69,14 +69,14 @@ private:
                 DEBUG << strerror(error);
                 onCloseSocket(CLSWRR);
             }
-            else 
+            else
             {
                 first = 1;
                 onConnected(SUCC);
             }
             return;
         }
-        
+
         while(m_Bufs.size() > 0)
         {
             Buffer buf = m_Bufs.front();
@@ -107,7 +107,7 @@ public:
         if(errno != 0) DEBUG << strerror(errno);
         DEBUG << "onCloseSocket: " << st << " " << m_sock.get_fd();
         errno = 0;
-        
+
         detach();
         closedSocket();
         m_sock.close();

@@ -35,7 +35,7 @@ public:
 
     void runforever()
     {
-        m_quitFlag = 0; 
+        m_quitFlag = 0;
         while (!m_quitFlag) run_once();
 
         if(m_quitFlag==2) return; // add for benchmark
@@ -145,10 +145,10 @@ public:
     {
         DEBUG << "Need Destory " << m_del.size() << " Objects";
 
-        for(int i=0;i<m_del.size();i++)
+        for(int i=0; i<m_del.size(); i++)
         {
             SocketHandler *handler = m_del[i];
-            if(handler) delete handler; 
+            if(handler) delete handler;
             handler = NULL;
         }
         vector<SocketHandler*> handlers;

@@ -63,7 +63,7 @@ private:
             errcode = 1;
             return;
         }
-        
+
         msg = str.substr(i+1,j-i-1);
         parseSub(msg);
     }
@@ -89,18 +89,25 @@ private:
             int j=i;
             while(j<msg.size())
             {
-                if(msg.at(j)!='&') { j++; continue; }
+                if(msg.at(j)!='&')
+                {
+                    j++;
+                    continue;
+                }
                 else
                 {
                     if(j+3<msg.size())
                     {
                         string st = msg.substr(j+1,3);
                         if(st=="gt;"||st=="lt;")
-                        { j++; continue; }
+                        {
+                            j++;
+                            continue;
+                        }
                     }
                     break;
                 }
-            } 
+            }
             if(i==j)
             {
                 errcode = 1;

@@ -9,7 +9,7 @@ using namespace utils;
 template<class T>
 class TCPAcceptor : public SocketHandler
 {
-     TCPAcceptor<T> & operator=(const TCPAcceptor<T> acceptor);
+    TCPAcceptor<T> & operator=(const TCPAcceptor<T> acceptor);
 public:
     TCPAcceptor() : SocketHandler(NULL) { }
     TCPAcceptor(EventLoop* _loop, int localport) : SocketHandler(_loop), ip(""), port(localport)
@@ -55,7 +55,8 @@ private:
     }
 
 private:
-    string ip; int port;
+    string ip;
+    int port;
 };
 
 #endif

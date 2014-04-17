@@ -62,17 +62,20 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &buf)
         else
         {
             INFO << "something error: " << flag;
-            if(flag == ERRPARAM || flag == ERRCHANL) 
-            { clsStatus = 1; onCloseSocket(CLSHTP);}
+            if(flag == ERRPARAM || flag == ERRCHANL)
+            {
+                clsStatus = 1;
+                onCloseSocket(CLSHTP);
+            }
             else
             {
                 string callback = keys["callback"];
                 string msg = callback + "('[{\"type\" : \"401\"}]')";
                 write(msg);
-                
+
                 onCloseSocket(CLSHTP);
             }
-        }  
+        }
     }
 }
 
@@ -101,14 +104,15 @@ int main()
 
     vector<TCPAcceptor<HttpInstance>*> acceptors(PORT_NUM,NULL);
 
-    for(int i = 0;i < PORT_NUM;i++)
+    for(int i = 0; i < PORT_NUM; i++)
         acceptors[i] = new TCPAcceptor<HttpInstance>(&loop, BASE_PORT+i);
 
     loop.runforever();
 
-    for(int i = 0;i < PORT_NUM;i++)
+    for(int i = 0; i < PORT_NUM; i++)
     {
-        delete acceptors[i]; acceptors[i] = NULL;
+        delete acceptors[i];
+        acceptors[i] = NULL;
     }
 
     return 0;

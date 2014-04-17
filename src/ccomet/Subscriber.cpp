@@ -2,8 +2,8 @@
 #include "Subscriber.h"
 #include "HttpInstance.h"
 
-Subscriber::Subscriber(string sname, Channel *channel, Server *server, 
-        HttpInstance *instance, int seqid, string callback)
+Subscriber::Subscriber(string sname, Channel *channel, Server *server,
+                       HttpInstance *instance, int seqid, string callback)
     : sname(sname), channel(channel), server(server), instance(instance), seqid(seqid), callback(callback)
 {
     channel->addSubscriber(this);

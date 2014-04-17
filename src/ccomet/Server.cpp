@@ -16,16 +16,16 @@ int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
 
     instance->setStatus();// just for test
     return SUCCEEED; // just for test
-    
+
     string msg = channel->formatStr(keys,"SIGN");
     channel->send(msg);
 
     Subscriber *subscriber = channel->findSubscriber(sname);
     if(subscriber) return ERRDULPE;
-    
+
     if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,0, callback);
     subscriber->sendOldMsg();
-    
+
     subscriber->close();
     return NEEDCLSD;
 }
@@ -33,7 +33,7 @@ int Server::sgn(map<string, string> &keys, HttpInstance* const instance)
 int Server::pub(map<string, string> &keys, HttpInstance* const instance)
 {
     //channel, sname, msg
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() 
+    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
             || keys.find("msg") == keys.end() || keys.find("callback") == keys.end())
         return ERRPARAM;
 
@@ -47,8 +47,9 @@ int Server::pub(map<string, string> &keys, HttpInstance* const instance)
 
     string smsg = channel->formatStr(keys,"MSG");
     channel->send(smsg);
-    
-    msg = callback; msg += "('[{\"type\" : \"pub\"}]')";
+
+    msg = callback;
+    msg += "('[{\"type\" : \"pub\"}]')";
     instance->write(msg);
 
     instance->setStatus();
