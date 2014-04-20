@@ -19,7 +19,7 @@ public:
                Server *server, HttpInstance *instance, int seqid, string callback);
 
 public:
-    string getSName()
+    string getSName() const
     {
         return sname;
     }

@@ -43,7 +43,7 @@ public:
         return true;
     }
 
-    bool send(string msg)
+    bool send(const string &msg)
     {
         msgs.push_back(msg);
         Subscriber *subscriber;

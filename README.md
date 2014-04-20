@@ -53,7 +53,6 @@ Demux    :   EPoll
 Phy-Mem  :   3888 MB
 ```
 
-
 1. First, we have tested the stability of our system. We will simulate one situation, different users connect to the server and after a short of period, they will be disconnected by themselves or by the server. At the same time, the total number of active connections won't be changed dynamically.
 
 2. Basic Test for huge connection. 
@@ -97,6 +96,14 @@ There are many bugs in the project.
 1. Use jsonp to solve [CORS](en.wikipedia.org/wiki/Cross-origin_resource_sharing‎)(Cross-Origin Resource Sharing) problem.
 2. Long-polling instead of polling. To solve some problem in jsonp, I use a timeout 30 seconds, which is a reasonable value, in produce mode.
 3. Compared with `icomet`, I remove authetication flow and support for iframe technology.
+
+## CComet UML Graph
+
+![CComet UML Graph](https://raw.githubusercontent.com/mathewes/blog-dot-file/master/CComet.png)
+
+## Role in Produce Atmosphere
+
+![ROLE](https://raw.githubusercontent.com/mathewes/blog-dot-file/master/CComet_flow.png)
 
 ## License
 
