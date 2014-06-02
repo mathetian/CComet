@@ -108,3 +108,7 @@ There are many bugs in the project.
 ## License
 
 This client is licensed under the same license as SealedServer. And this license will be restricted by the license of `icomet`.
+
+## Todo List
+1. Android & Windows Phone 8
+2. Full Test 
