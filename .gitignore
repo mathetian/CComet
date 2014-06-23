@@ -20,3 +20,5 @@ tests/echo_server
 ccomet/Channel
 ccomet/HttpInstance
 *orig
+*err
+*.a

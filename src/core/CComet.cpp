@@ -7,17 +7,17 @@ using namespace utils;
 
 #include "Socket.h"
 #include "Acceptor.h"
-#include "EventLoop.h"
+#include "EventPool.h"
 #include "MsgHandler.h"
 using namespace sealedserver;
 
 #include "Server.h"
 #include "HttpInstance.h"
 
-#define PORT_NUM  10
+#define PORT_NUM  1
 #define BASE_PORT 10000
 
-EventPool poll(4);
+EventPool pool(1);
 
 /// Signal stop the server
 void signalStop(int)
@@ -51,9 +51,9 @@ int main()
     vector<TCPAcceptor<HttpInstance>*> acceptors(PORT_NUM, NULL);
 
     for(int i = 0; i < PORT_NUM; i++)
-        acceptors[i] = new TCPAcceptor<HttpInstance>(&loop, BASE_PORT+i);
+        acceptors[i] = new TCPAcceptor<HttpInstance>(pool.getRandomLoop(), BASE_PORT + i);
 
-    loop.run();
+    pool.run();
 
     for(int i = 0; i < PORT_NUM; i++)
     {

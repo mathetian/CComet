@@ -5,16 +5,14 @@
 #ifndef _SUB_SCRIBER_H
 #define _SUB_SCRIBER_H
 
-#include <string>
-using namespace std;
+#include "Noncopyable.h"
+using namespace utils;
+
+#include "Header.h"
 
 class Server;
 class Channel;
 class HttpInstance;
-
-#define ILLSEQ 0
-#define NEEDWT 1
-#define SENTNE 2
 
 /**
 ** Each user will be a subscriber
@@ -23,8 +21,7 @@ class Subscriber : public Noncopyable
 {
 public:
     /// Constructor
-    Subscriber(string sname, int seqid, string callback, Server *server, 
-                Channel *channel, HttpInstance *instance);
+    Subscriber(string sname, int seqid, string callback, Server *server, Channel *channel, HttpInstance *instance);
 
     /// Destructor
     virtual ~Subscriber();
@@ -34,7 +31,10 @@ public:
     void   send(const string &message);
     
     /// Send multiple messages
-    void   sendAllMessage();
+    void   sendHistory();
+
+    /// Check wthether send old data(seqid2updated id)
+    void   check();
 
     /// Close the handler_(detach and remove from memory)
     void   close();

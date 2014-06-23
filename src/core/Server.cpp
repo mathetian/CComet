@@ -4,10 +4,25 @@
 
 #include "Server.h"
 
-int Server::sign(const Params &keys, const HttpInstance* const handler)
+/// Singleton
+Server& Server::Instance()
 {
-    //channel, sname
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()\  
+    static Server server_;
+    return server_;
+}
+
+Server::Server()
+{
+}
+
+Server::~Server()
+{
+}
+
+STATUS1 Server::sign(Params &keys, HttpInstance* handler)
+{
+    /// channel, sname
+    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() \
          || keys.find("callback") == keys.end())
         return ERRPARAM;
 
@@ -18,22 +33,26 @@ int Server::sign(const Params &keys, const HttpInstance* const handler)
     Channel     *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
 
-    Subscriber *subscriber = channel -> findSubscriber(sname);
+    /// Find the subscriber
+    Subscriber *subscriber = channel -> find(sname);
     if(subscriber) return ERRDULPE;
 
-    if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,0, callback);
-    subscriber->sendOldMsg();
+    /// Tell others in the same channel that somebody has logined in.
+    string msg = channel -> format(keys, "SIGN");
+    channel -> sendSign(msg);
 
-    string msg = channel -> formatStr(keys, "SIGN");
-    channel -> send(msg);
+    /// Create the subscriber
+    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
+    
+    /// Send old message
+    subscriber -> sendHistory();
 
-    subscriber->close();
-    return NEEDCLSD;
+    return SUCCEEED;
 }
 
-int Server::pub(const Params &keys, const HttpInstance* const handler)
+STATUS1 Server::publish(Params &keys, HttpInstance* handler)
 {
-    //channel, sname, msg
+    /// channel, sname, msg
     if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
             || keys.find("msg") == keys.end() || keys.find("callback") == keys.end())
         return ERRPARAM;
@@ -46,20 +65,21 @@ int Server::pub(const Params &keys, const HttpInstance* const handler)
     Channel *channel = getChannel(cname);
     if(!channel) return ERRCHANL;
 
-    string smsg = channel->formatStr(keys,"MSG");
-    channel->send(smsg);
+    /// Find the subscriber
+    Subscriber *subscriber = channel -> find(sname);
 
-    msg = callback;
-    msg += "('[{\"type\" : \"pub\"}]')";
-    instance->write(msg);
+    /// Create the subscriber if not exist
+    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
 
-    instance->setStatus();
-    return NEEDCLSD;
+    string smsg = channel->format(keys, "MSG");
+    channel -> sendChat(smsg);
+
+    return SUCCEEED;
 }
 
-int Server::sub(const Params &keys, const HttpInstance *const handler)
+STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
 {
-    //channel, sname, seqid
+    /// channel, sname, seqid
     if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
             || keys.find("seqid") == keys.end() || !is_int(keys["seqid"]) || keys.find("callback") == keys.end())
         return ERRPARAM;
@@ -72,38 +92,33 @@ int Server::sub(const Params &keys, const HttpInstance *const handler)
     Channel *channel = getChannel(channelId);
     if(!channel) return ERRCHANL;
 
-    Subscriber *subscriber = channel->findSubscriber(sname);
+    /// Find the subscriber
+    Subscriber *subscriber = channel -> find(sname);
+
+    /// Can't duplicate
     if(subscriber) return ERRDULPE;
 
-    if(!subscriber) subscriber = new Subscriber(sname,channel,this,instance,seqid, callback);
+    /// Create the subscriber if not exist
+    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
 
-    int flag = subscriber->trySend();
-    switch(flag)
-    {
-    case ILLSEQ:
-        subscriber->close();
-        return NEEDCLSD;
-    case SENTNE:
-        subscriber->close();
-        return NEEDCLSD;
-    }
-
+    subscriber -> check();
+    
     return SUCCEEED;
 }
 
 Channel* Server::getChannel(const string &name)
 {
-    if(channels.find(name) == channels.end())
+    if(channels_.find(name) == channels_.end())
         return NULL;
 
-    return channels[name];
+    return channels_[name];
 }
 
 Channel* Server::newChannel(const string &cname)
 {
     Channel *channel= new Channel(cname);
     
-    channels[cname] = channel;
+    channels_[cname] = channel;
     
     return channel;
 }

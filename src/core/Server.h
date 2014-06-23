@@ -11,19 +11,16 @@ using namespace utils;
 #include "Channel.h"
 #include "HttpInstance.h"
 
-enum STATUS {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD};
+enum STATUS1 {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD};
 
 class Server : public Noncopyable
 {
+public:
     typedef map<string, string> Params;
 
 public:
     /// Singleton
-    static Server& Instance()
-    {
-        static Server server_;
-        return server_;
-    }
+    static Server& Instance();
 
     /// Destructor
     virtual ~Server();
@@ -41,7 +38,7 @@ public:
     /// 
     /// @param params , params   
     ///        handler, the instance of Handler
-    int sign(const Params &params, const HttpInstance* const handler);
+    STATUS1 sign(Params &keys, HttpInstance* handler);
         
     /// Publish, publish a message
     /// Send a message to all active users
@@ -49,14 +46,14 @@ public:
     ///
     /// @param params , params   
     ///        handler, the instance of Handler
-    int publish(Params &params, const HttpInstance* const handler);
+    STATUS1 publish(Params &keys, HttpInstance* handler);
     
     /// Subscribe, subscribe with special channel
     /// Wait for reply
     ///
     /// @param params , params   
     ///        handler, the instance of Handler
-    int subscribe(const Params &params, const HttpInstance* const handler);
+    STATUS1 subscribe(Params &keys, HttpInstance* handler);
 
 private:
     /// GetChannel with the channel name(`cname`)

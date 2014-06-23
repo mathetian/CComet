@@ -15,6 +15,7 @@ using namespace sealedserver;
 
 class HttpInstance :public MSGHandler
 {
+public:
     typedef map<string, string> Params;
 
 public:
@@ -26,12 +27,15 @@ public:
     /// As we need to process the message we received
     void receivedMsg(STATUS status, Buffer &receivedBuff);
 
+    /// Invoked when a msg has been sent
+    void sentMsg(STATUS status, int len, int targetLen);
+
     /// Invoke when the socket has been closed
     void closed(ClsMtd st); 
 
 public:
     /// Attach the subscriber to `this`
-    void attachSubscriber(const Subscriber *const subscriber);
+    void attachSubscriber(Subscriber *subscriber);
 
 private:
     /// Param paramters
@@ -48,7 +52,6 @@ private:
     string      type_;
     int         errcode_;
     Params      params_;
-    int         clsStatus_;
     Subscriber *subscriber_;
     Server     &server_;
 };

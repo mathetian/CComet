@@ -6,8 +6,7 @@
 #include "HttpInstance.h"
 
 HttpInstance::HttpInstance(EventLoop *loop, Socket sock) : \
-    MSGHandler(loop, sock), errcode_(0), 
-        clsStatus_(0), subscriber_(NULL), server_(Server::Instance())
+    MSGHandler(loop, sock), errcode_(0), subscriber_(NULL), server_(Server::Instance())
 { 
 }
 
@@ -19,33 +18,61 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
 {
     parse(receivedBuff);
 
-    if(errcode_ == 1 || inSet(type) == false)
+    if(errcode_ == 1 || inSet(type_) == false)
     {
-        /// TBD 404 and Close The Socket        
+        /// TBD 404 and Close The Socket
+        write("('[{\"type\" : \"404\"}]')");   
     }
     else
     {
-        STATUS flag;
+        STATUS1 flag;
 
-        if(type=="sign") 
+        if(type_ == "sign")
+        {
             flag = server_.sign(params_, this);
-        else if(type=="sub")  
-            flag = server_.subscriber(params_, this);
-        else 
+            
+            if(flag == ERRPARAM)
+                write("('[{\"type\" : \"400\"}]')");
+            else if(flag == ERRDULPE)
+                write("('[{\"type\" : \"401\"}]')");
+        }
+        else if(type_ == "sub")
+        {
+            flag = server_.subscribe(params_, this);
+
+            if(flag == ERRPARAM)
+                write("('[{\"type\" : \"400\"}]')");
+            else if(flag == ERRDULPE)
+                write("('[{\"type\" : \"401\"}]')");
+            else if(flag == ERRCHANL)
+                write("('[{\"type\" : \"402\"}]')");
+        }
+        else
+        {
             flag = server_.publish(params_, this);
 
-        /// TBD
+            if(flag == ERRPARAM)
+                write("('[{\"type\" : \"400\"}]')");
+            else if(flag == ERRCHANL)
+                write("('[{\"type\" : \"402\"}]')");
+        }
     }
 }
-void HttpInstance::closedSocket()
+
+void HttpInstance::sentMsg(STATUS status, int len, int targetLen)
 {
-   /// TBD
-   /// Close By Peer
-   /// OR
-   /// Close By Manual
+    onCloseEvent(CLSMAN);
 }
 
-void HttpInstance::attachSubscriber(Subscriber *const subscriber)
+void HttpInstance::closed(ClsMtd st)
+{
+    assert(subscriber_);
+
+    delete subscriber_;
+    subscriber_ = NULL;
+}
+
+void HttpInstance::attachSubscriber(Subscriber *subscriber)
 {
     subscriber_ = subscriber;
 }
@@ -129,12 +156,12 @@ void HttpInstance::parseParams(const string &msg)
 
         if(i==j)
         {
-            errcode = 1;
+            errcode_ = 1;
             return;
         }
         
         parseKey(msg.substr(i,j-i));
-        i=j+1;
+        i = j+1;
     }
 }
 
@@ -150,7 +177,7 @@ void HttpInstance::parseKey(const string &msg)
         params_[msg.substr(0,i)] = msg.substr(i+1);
 }
 
-bool HttpInstance::isInSets(string str)
+bool HttpInstance::inSet(string str)
 {
     return (str == "sign" || str == "publish" || \
             str == "subscribe") ? true : false;

@@ -14,6 +14,7 @@ using namespace utils;
 
 class Channel : public Noncopyable
 {
+public:
     typedef map<string, string> Params;
 public:
     /// Constructor
@@ -38,6 +39,25 @@ public:
 
     /// Format string, according to the type
     string format(Params &keys, string type);
+
+public:
+    /// Get All Messages
+    string getHistory() const;
+
+    /// Get Sub Messages
+    ///
+    /// @param seqid, from seqid to history_.size()(exclude)
+    string getSubHistory(int seqid) const;
+
+    /// Get the maxinum ID
+    int    getMxID() const;
+
+public:
+    /// Send the `chat` data
+    void sendChat(const string &message);
+
+    /// Send the `sign` data
+    void sendSign(const string &messag);
 
 private:
     /// All subscribers in this channel
