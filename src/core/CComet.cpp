@@ -17,25 +17,27 @@ using namespace sealedserver;
 #define PORT_NUM  10
 #define BASE_PORT 10000
 
-Server    server;
 EventPool poll(4);
 
-/// Signal Stop the server
+/// Signal stop the server
 void signalStop(int)
 {
     INFO << "Stop running...by manually";
     pool.stop();
 }
 
-int setlimit(int num_pipes)
+bool setlimit(int num_pipes)
 {
     struct rlimit rl;
     rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
+    
     if (::setrlimit(RLIMIT_NOFILE, &rl) == -1)
     {
         fprintf(stderr, "setrlimit error: %s", strerror(errno));
-        return 1;
+        return false;
     }
+
+    return true;
 }
 
 int main()

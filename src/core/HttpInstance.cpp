@@ -6,7 +6,8 @@
 #include "HttpInstance.h"
 
 HttpInstance::HttpInstance(EventLoop *loop, Socket sock) : \
-    MSGHandler(loop, sock), errcode_(0), clsStatus_(0), subscriber_(NULL) 
+    MSGHandler(loop, sock), errcode_(0), 
+        clsStatus_(0), subscriber_(NULL), server_(Server::Instance())
 { 
 }
 
@@ -27,11 +28,11 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
         STATUS flag;
 
         if(type=="sign") 
-            flag = server.sign(params_, this);
+            flag = server_.sign(params_, this);
         else if(type=="sub")  
-            flag = server.subscriber(params_, this);
+            flag = server_.subscriber(params_, this);
         else 
-            flag = server.publish(params_, this);
+            flag = server_.publish(params_, this);
 
         /// TBD
     }

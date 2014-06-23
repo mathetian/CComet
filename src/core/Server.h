@@ -16,12 +16,21 @@ enum STATUS {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD};
 class Server : public Noncopyable
 {
     typedef map<string, string> Params;
+
 public:
-    /// Constructor
-    Server();
+    /// Singleton
+    static Server& Instance()
+    {
+        static Server server_;
+        return server_;
+    }
 
     /// Destructor
     virtual ~Server();
+
+private:
+    /// Constructor
+    Server();
 
 public:
     /// We provide three functions in the server

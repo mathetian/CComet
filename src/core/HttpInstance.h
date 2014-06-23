@@ -50,6 +50,7 @@ private:
     Params      params_;
     int         clsStatus_;
     Subscriber *subscriber_;
+    Server     &server_;
 };
 
 #endif
