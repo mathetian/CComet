@@ -38,13 +38,11 @@ void Subscriber::check()
         /// TBD, write exceed information
 
         string lcallback; string rcallback;
-        if(params_.find("callback") != params_.end())
-        {
-            lcallback = params_["callback"] + "('[";
-            rcallback = "]')";
-        }
         
-        handler_ -> write("('[{\"type\" : \"403\"}]')");
+        lcallback = callback_ + "('[";
+        rcallback = "]')";
+        
+        handler_ -> write(lcallback + "{\"type\" : \"403\"}" + rcallback);
     }
 
     if(seqid_ < channel_ -> getMxID())
