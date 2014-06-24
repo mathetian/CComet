@@ -36,7 +36,9 @@ public:
     /// Send a token back to the `user`
     /// It will send a message to all active users
     /// 
-    /// @param params , params   
+    /// /sign?channel=channel1&sname=user1&callback=callback
+    ///
+    /// @param keys   , params   
     ///        handler, the instance of Handler
     STATUS1 sign(Params &keys, HttpInstance* handler);
         
@@ -44,14 +46,14 @@ public:
     /// Send a message to all active users
     /// And add this messge to history
     ///
-    /// @param params , params   
+    /// @param keys   , params   
     ///        handler, the instance of Handler
     STATUS1 publish(Params &keys, HttpInstance* handler);
     
     /// Subscribe, subscribe with special channel
     /// Wait for reply
     ///
-    /// @param params , params   
+    /// @param keys   , params   
     ///        handler, the instance of Handler
     STATUS1 subscribe(Params &keys, HttpInstance* handler);
 

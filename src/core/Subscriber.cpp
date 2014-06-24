@@ -58,5 +58,5 @@ string Subscriber::getName() const
 
 string Subscriber::concat(const string &message)
 {   
-    return callback_ + "('[" + message + "]')";
+    return callback_ + "(\'[" + message + "]\')";
 }

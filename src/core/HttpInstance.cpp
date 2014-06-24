@@ -66,10 +66,11 @@ void HttpInstance::sentMsg(STATUS status, int len, int targetLen)
 
 void HttpInstance::closed(ClsMtd st)
 {
-    assert(subscriber_);
-
-    delete subscriber_;
-    subscriber_ = NULL;
+    if(subscriber_)
+    {
+        delete subscriber_;
+        subscriber_ = NULL;
+    }
 }
 
 void HttpInstance::attachSubscriber(Subscriber *subscriber)

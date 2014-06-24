@@ -22,8 +22,7 @@ Server::~Server()
 STATUS1 Server::sign(Params &keys, HttpInstance* handler)
 {
     /// channel, sname
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() \
-         || keys.find("callback") == keys.end())
+    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() || keys.find("callback") == keys.end())
         return ERRPARAM;
 
     string cname    = keys["channel"];
