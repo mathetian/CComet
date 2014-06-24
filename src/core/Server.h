@@ -46,6 +46,8 @@ public:
     /// Send a message to all active users
     /// And add this messge to history
     ///
+    /// /publish?channel=channel1&sname=user2&callback=callback&msg=helloworld
+    ///
     /// @param keys   , params   
     ///        handler, the instance of Handler
     STATUS1 publish(Params &keys, HttpInstance* handler);
@@ -53,6 +55,8 @@ public:
     /// Subscribe, subscribe with special channel
     /// Wait for reply
     ///
+    /// /subscribe?channel=channel1&sname=user1&seqid=0&callback=callback
+    /// 
     /// @param keys   , params   
     ///        handler, the instance of Handler
     STATUS1 subscribe(Params &keys, HttpInstance* handler);

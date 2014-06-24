@@ -21,8 +21,9 @@ Server::~Server()
 
 STATUS1 Server::sign(Params &keys, HttpInstance* handler)
 {
-    /// channel, sname
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() || keys.find("callback") == keys.end())
+    /// channel, sname, callback
+    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() 
+            || keys.find("callback") == keys.end())
         return ERRPARAM;
 
     string cname    = keys["channel"];
@@ -51,7 +52,7 @@ STATUS1 Server::sign(Params &keys, HttpInstance* handler)
 
 STATUS1 Server::publish(Params &keys, HttpInstance* handler)
 {
-    /// channel, sname, msg
+    /// channel, sname, msg, callback
     if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
             || keys.find("msg") == keys.end() || keys.find("callback") == keys.end())
         return ERRPARAM;
@@ -78,7 +79,7 @@ STATUS1 Server::publish(Params &keys, HttpInstance* handler)
 
 STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
 {
-    /// channel, sname, seqid
+    /// channel, sname, seqid, callback
     if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
             || keys.find("seqid") == keys.end() || !is_int(keys["seqid"]) || keys.find("callback") == keys.end())
         return ERRPARAM;
@@ -98,7 +99,7 @@ STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
     if(subscriber) return ERRDULPE;
 
     /// Create the subscriber if not exist
-    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
+    if(!subscriber) subscriber = new Subscriber(sname, seqid, callback, this, channel, handler);
 
     subscriber -> check();
     

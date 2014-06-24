@@ -70,7 +70,10 @@ string Channel::getHistory() const
     string msg;
 
     for(int i = 0;i < history_.size();i++)
-        msg += "," + history_.at(i);
+    {
+        if(i != 0) msg += ",";
+        msg += history_.at(i);
+    }
 
     return msg;
 }
@@ -80,14 +83,17 @@ string Channel::getSubHistory(int seqid) const
     string msg;
 
     for(int i = seqid;i < history_.size();i++)
-        msg += "," + history_.at(i);
+    {
+        if(i != seqid) msg += ",";
+        msg += history_.at(i);
+    }
 
     return msg;
 }
 
 int Channel::getMxID() const
 {
-    return history_.size() - 1;
+    return history_.size();
 }
 
 void Channel::sendChat(const string &message)

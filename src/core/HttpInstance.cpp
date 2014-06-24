@@ -36,7 +36,7 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
             else if(flag == ERRDULPE)
                 write("('[{\"type\" : \"401\"}]')");
         }
-        else if(type_ == "sub")
+        else if(type_ == "subscribe")
         {
             flag = server_.subscribe(params_, this);
 
