@@ -2,19 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h>
-#include <netinet/tcp.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <assert.h>
-
-#include <sys/time.h>
-#include <sys/resource.h>
+#include "Header.h"
 
 #define BASE_PORT 10000
 #define PORT_NUM  10
@@ -44,8 +32,9 @@ int main(int argc, char **argv)
 {
     struct sockaddr_in addr;
     const char *ip = "127.0.0.1";
-    int opt = 1;
-    int bufsize;
+    int        opt = 1;
+    int        bufsize;
+    
     socklen_t optlen;
     int connections = 0;
 

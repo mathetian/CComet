@@ -20,17 +20,14 @@ ccomet: ${SOURCES}
 	${CXX} ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
 	mv $@ bin
 
-bench_comet: tests/bench_comet.cpp src/utils/Log.cpp
-	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ 
+bench_comet: tests/bench_comet.cpp
+	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
+	mv $@ bin
+
+bench_c100k: tests/bench_c100k.cpp
+	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
 	mv $@ bin
 	
-bench_c100k: tests/bench_c100k.cpp
-	$(CXX) ${CXXFLAGS}  $^ -o $@ 
-	mv $@ bin
-
-EPollServer: extras/EPollServer.cpp
-	$(CXX) ${CXXFLAGS} ${CHEADER} ${HEADER} $^ -o $@ 
-
 prepare:
 	-mkdir bin
 	cd deps/SealedServer; make; cp *.a ../..; cd ../..

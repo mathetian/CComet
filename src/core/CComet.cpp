@@ -14,7 +14,7 @@ using namespace sealedserver;
 #include "Server.h"
 #include "HttpInstance.h"
 
-#define PORT_NUM  1
+#define PORT_NUM  10
 #define BASE_PORT 10000
 
 EventPool pool(1);
