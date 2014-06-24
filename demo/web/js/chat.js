@@ -210,8 +210,8 @@ var comet;
 var ccomet_host = '127.0.0.1:10000';
 
 var sign_url = 'http://' + ccomet_host + '/sign?';
-var pub_url  = 'http://' + ccomet_host + '/pub?';
-var sub_url  = 'http://' + ccomet_host + '/sub?';
+var pub_url  = 'http://' + ccomet_host + '/publish?';
+var sub_url  = 'http://' + ccomet_host + '/subscribe?';
 
 var msgs = [];
 function addmsg(euid, name, content, is) 

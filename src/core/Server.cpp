@@ -36,16 +36,16 @@ STATUS1 Server::sign(Params &keys, HttpInstance* handler)
     /// Find the subscriber
     Subscriber *subscriber = channel -> find(sname);
     if(subscriber) return ERRDULPE;
-
+    
     /// Tell others in the same channel that somebody has logined in.
     string msg = channel -> format(keys, "SIGN");
     channel -> sendSign(msg);
 
-    /// Create the subscriber
-    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
+    // /// Create the subscriber
+    // if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
     
-    /// Send old message
-    subscriber -> sendHistory();
+    // /// Send old message
+    // subscriber -> sendHistory();
 
     return SUCCEEED;
 }
@@ -63,13 +63,13 @@ STATUS1 Server::publish(Params &keys, HttpInstance* handler)
     string callback = keys["callback"];
 
     Channel *channel = getChannel(cname);
-    if(!channel) return ERRCHANL;
+    if(!channel) channel = newChannel(cname);
 
-    /// Find the subscriber
-    Subscriber *subscriber = channel -> find(sname);
+    // /// Find the subscriber
+    // Subscriber *subscriber = channel -> find(sname);
 
-    /// Create the subscriber if not exist
-    if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
+    // /// Create the subscriber if not exist
+    // if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
 
     string smsg = channel->format(keys, "MSG");
     channel -> sendChat(smsg);
@@ -84,13 +84,13 @@ STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
             || keys.find("seqid") == keys.end() || !is_int(keys["seqid"]) || keys.find("callback") == keys.end())
         return ERRPARAM;
 
-    string channelId = keys["channel"];
+    string cname     = keys["channel"];
     string sname     = keys["sname"];
     int seqid        = to_int(keys["seqid"]);
     string callback  = keys["callback"];
 
-    Channel *channel = getChannel(channelId);
-    if(!channel) return ERRCHANL;
+    Channel *channel = getChannel(cname);
+    if(!channel) channel = newChannel(cname);
 
     /// Find the subscriber
     Subscriber *subscriber = channel -> find(sname);

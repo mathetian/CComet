@@ -36,6 +36,14 @@ void Subscriber::check()
     if(seqid_ > channel_ -> getMxID())
     {
         /// TBD, write exceed information
+
+        string lcallback; string rcallback;
+        if(params_.find("callback") != params_.end())
+        {
+            lcallback = params_["callback"] + "('[";
+            rcallback = "]')";
+        }
+        
         handler_ -> write("('[{\"type\" : \"403\"}]')");
     }
 
@@ -58,5 +66,5 @@ string Subscriber::getName() const
 
 string Subscriber::concat(const string &message)
 {   
-    return callback_ + "(\'[" + message + "]\')";
+    return callback_ + "('[" + message + "]')";
 }

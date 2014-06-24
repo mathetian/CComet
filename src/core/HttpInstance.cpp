@@ -27,34 +27,47 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
     {
         STATUS1 flag;
 
-        if(type_ == "sign")
+        string lcallback; string rcallback;
+        if(params_.find("callback") != params_.end())
+        {
+            lcallback = params_["callback"] + "('[";
+            rcallback = "]')";
+        }
+
+        if(type_ == "sign") 
         {
             flag = server_.sign(params_, this);
-            
+
             if(flag == ERRPARAM)
-                write("('[{\"type\" : \"400\"}]')");
+                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRDULPE)
-                write("('[{\"type\" : \"401\"}]')");
+                write(lcallback + "{\"type\" : \"401\"}" + rcallback);
+            else
+                write(lcallback + "{\"type\" : \"sign in\"}" + rcallback);
         }
         else if(type_ == "subscribe")
         {
             flag = server_.subscribe(params_, this);
 
             if(flag == ERRPARAM)
-                write("('[{\"type\" : \"400\"}]')");
+                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRDULPE)
-                write("('[{\"type\" : \"401\"}]')");
+                write(lcallback + "{\"type\" : \"401\"}" + rcallback);
             else if(flag == ERRCHANL)
-                write("('[{\"type\" : \"402\"}]')");
+                write(lcallback + "{\"type\" : \"402\"}" + rcallback);
         }
         else
         {
             flag = server_.publish(params_, this);
 
             if(flag == ERRPARAM)
-                write("('[{\"type\" : \"400\"}]')");
+                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRCHANL)
-                write("('[{\"type\" : \"402\"}]')");
+                write(lcallback + "{\"type\" : \"402\"}" + rcallback);
+            else
+            {
+                write(lcallback + "{\"type\" : \"publish\"}" + rcallback);
+            }
         }
     }
 }
