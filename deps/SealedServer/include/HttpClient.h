@@ -16,9 +16,9 @@ namespace sealedserver
 
 class HttpClient : public Noncopyable
 {
-    typedef void (*Call) (HttpRequest*, void*);
+    typedef void (*Callback) (HttpRequest*, void*);
     typedef void (*Error) (HttpRequest*, void*);
-    typedef pair<pair<Call, Call>, void*> Pair;
+    typedef pair<pair<Callback, Callback>, void*> Pair;
 
     /// each url with has  a Pair
     /// That means, we don't support that
@@ -27,7 +27,7 @@ class HttpClient : public Noncopyable
     /// client_.request(url, get2, error2, arg2);
     ///
     /// Also, we won't clean the url we have requests
-    typedef map<string, Pair> Calls;
+    typedef map<string, Pair> Callbacks;
 
 public:
     /// Constructor
@@ -57,14 +57,14 @@ public:
     ///
     /// @return true , request successful
     /// @return false, request failed
-    bool request(const string &url, Call get, Call error, void *arg);
+    bool request(const string &url, Callback get, Callback error, void *arg);
 
 public:
     void process(HttpRequest *req);
 
 private:
     EventPool pool_;
-    Calls     calls_;
+    Callbacks calls_;
     int       port_;
 };
 

@@ -19,8 +19,8 @@ namespace sealedserver
 
 class HttpServer : public Noncopyable
 {
-    typedef void (*Call) (HttpRequest*, HttpResponse*, void*);
-    typedef pair<Call, void*> Pair;
+    typedef void (*Callback) (HttpRequest*, HttpResponse*, void*);
+    typedef pair<Callback, void*> Pair;
     typedef map<string, Pair> Callbacks;
 
 public:
@@ -30,8 +30,8 @@ public:
 public:
     void start();
     void stop();
-    void add(const string &url, Call callback, void *arg);
-    void error(Call callback, void *arg);
+    void add(const string &url, Callback callback, void *arg);
+    void error(Callback callback, void *arg);
 
 public:
     bool process(HttpRequest *conn);

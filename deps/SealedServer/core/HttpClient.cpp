@@ -30,7 +30,7 @@ void HttpClient::stop()
     pool_.stop();
 }
 
-bool HttpClient::request(const string &url, Call get, Call error, void *arg)
+bool HttpClient::request(const string &url, Callback get, Callback error, void *arg)
 {
     if(calls_.find(url) != calls_.end())
     {
@@ -68,8 +68,8 @@ void HttpClient::process(HttpRequest *req)
 
     assert(calls_.find(url) != calls_.end());
 
-    Call   get = calls_[url].first.first;
-    Call error = calls_[url].first.second;
+    Callback   get = calls_[url].first.first;
+    Callback error = calls_[url].first.second;
     void      *arg = calls_[url].second;
 
     if(errcode != 0) {

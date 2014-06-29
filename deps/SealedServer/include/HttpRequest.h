@@ -5,7 +5,6 @@
 #ifndef _HTTP_CONN_H
 #define _HTTP_CONN_H
 
-#include "Callback.h"
 #include "MsgHandler.h"
 using namespace sealedserver;
 
@@ -44,13 +43,6 @@ public:
     /// Invoked when a msg has been sent
     /// Only for the server
     virtual void sent(STATUS status, int len, int targetLen);
-
-    /// Default, it will use the parent class's close function
-    virtual void close();
-
-public:
-    /// 
-    void registerCloseCallback();
 
 public:
     /// For the server
@@ -121,10 +113,6 @@ private:
 
     /// The parser result
     HttpParser   *parser_;
-
-    /// Close Callback
-    bool         clsflag_;
-    Callback     callback_;
 };
 
 };
