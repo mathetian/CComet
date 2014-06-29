@@ -123,6 +123,9 @@ STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
     /// Create the subscriber if not exist
     if(!subscriber) subscriber = new Subscriber(sname, seqid, callback, this, channel, req, rep);
 
+    /// Register subscriber here
+    req -> RegisterVariable(subscriber);
+
     if(subscriber -> check() == false)
     {
         delete subscriber;

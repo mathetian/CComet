@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
+#ifndef _REQ_INST_H
+#define _REQ_INST_H
+
 #include "HttpRequest.h"
 using namespace sealedserver;
 
@@ -10,22 +13,22 @@ using namespace sealedserver;
 namespace ccomet
 {
 
-class HttpInstance : public HttpRequest
+class ReqInstance : public HttpRequest
 {
 public:
 	/// Constructor, for the server
-    HttpInstance(HttpServer *server, EventLoop *loop, Socket sock) : HttpRequest(server, loop, sock)
+    ReqInstance(HttpServer *server, EventLoop *loop, Socket sock) : HttpRequest(server, loop, sock)
     {
     	subscriber_ = NULL;
     }
 
     /// Destructor
-    virtual ~HttpInstance()
+    virtual ~ReqInstance()
     {
     }
 
 public:
-    virtual void RegisterVariable(void *arg) 
+    void RegisterVariable(void *arg) 
     { 
     	subscriber_ = (Subscriber*)arg;
     }
@@ -39,8 +42,11 @@ private:
     }
 
 private:
-	/// 
+
+	/// Subscriber
 	Subscriber *subscriber_;
 };
 
 };
+
+#endif

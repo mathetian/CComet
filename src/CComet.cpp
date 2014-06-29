@@ -11,12 +11,12 @@ using namespace utils;
 using namespace sealedserver;
 
 #include "Server.h"
-#include "HttpInstance.h"
+#include "ServerInstance.h"
 using namespace ccomet;
 
 #define      Port 8081
-HttpServer httpServer(Port);
-Server      &server = Server::Instance();
+ServerInstance   httpServer(Port);
+Server          &server = Server::Instance();
 
 void sign_handler(HttpRequest *req, HttpResponse *rep, void *arg)
 {
