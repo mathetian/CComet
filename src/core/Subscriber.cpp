@@ -22,13 +22,13 @@ Subscriber::~Subscriber()
 
 void Subscriber::send(const string &message)
 {
-    handler_ -> write(concat(message));
+    handler_ -> send(concat(message));
 }
 
 void Subscriber::sendHistory()
 {
     string message = channel_ -> getHistory();
-    handler_ -> write(concat(message));
+    handler_ -> send(concat(message));
 }
 
 void Subscriber::check()
@@ -42,13 +42,13 @@ void Subscriber::check()
         lcallback = callback_ + "('[";
         rcallback = "]')";
         
-        handler_ -> write(lcallback + "{\"type\" : \"403\"}" + rcallback);
+        handler_ -> send(lcallback + "{\"type\" : \"403\"}" + rcallback);
     }
 
     if(seqid_ < channel_ -> getMxID())
     {
         string message = channel_ -> getSubHistory(seqid_);
-        handler_ -> write(concat(message));
+        handler_ -> send(concat(message));
     }
 }
 

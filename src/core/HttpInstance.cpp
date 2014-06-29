@@ -21,7 +21,7 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
     if(errcode_ == 1 || inSet(type_) == false)
     {
         /// TBD 404 and Close The Socket
-        write("('[{\"type\" : \"404\"}]')");   
+        send("('[{\"type\" : \"404\"}]')");   
     }
     else
     {
@@ -39,34 +39,34 @@ void HttpInstance::receivedMsg(STATUS status, Buffer &receivedBuff)
             flag = server_.sign(params_, this);
 
             if(flag == ERRPARAM)
-                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRDULPE)
-                write(lcallback + "{\"type\" : \"401\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"401\"}" + rcallback);
             else
-                write(lcallback + "{\"type\" : \"sign in\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"sign in\"}" + rcallback);
         }
         else if(type_ == "subscribe")
         {
             flag = server_.subscribe(params_, this);
 
             if(flag == ERRPARAM)
-                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRDULPE)
-                write(lcallback + "{\"type\" : \"401\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"401\"}" + rcallback);
             else if(flag == ERRCHANL)
-                write(lcallback + "{\"type\" : \"402\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"402\"}" + rcallback);
         }
         else
         {
             flag = server_.publish(params_, this);
 
             if(flag == ERRPARAM)
-                write(lcallback + "{\"type\" : \"400\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"400\"}" + rcallback);
             else if(flag == ERRCHANL)
-                write(lcallback + "{\"type\" : \"402\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"402\"}" + rcallback);
             else
             {
-                write(lcallback + "{\"type\" : \"publish\"}" + rcallback);
+                send(lcallback + "{\"type\" : \"publish\"}" + rcallback);
             }
         }
     }
