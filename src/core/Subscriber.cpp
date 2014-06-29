@@ -45,7 +45,7 @@ bool Subscriber::check()
     {
         string message = channel_ -> getSubHistory(seqid_);
 
-        rep_ -> addBody(concat("{\"type\" : \"403\"}"));
+        rep_ -> addBody(concat(message));
         rep_ -> send();
 
         return false;

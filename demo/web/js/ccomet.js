@@ -75,9 +75,18 @@ function CComet(config)
 			},
 			error: function (msg, textStatus, errorThrown)
 			{
-				self.log('failed sub: ');
-				self.log(msg);
-				self.log('status: ' + textStatus + ' ' + errorThrown);
+				if(textStatus == 'timeout')
+				{
+					self.log('timeout. continue sub');
+					self.sub();
+				}
+				else
+				{
+					self.log('failed sub: ');
+					self.log(msg);
+					self.log('status: ' + textStatus + ' ' + errorThrown);
+				}
+				
 			}
 		});
 	}

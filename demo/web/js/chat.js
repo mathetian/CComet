@@ -207,7 +207,7 @@ var uid = 'u' + (Math.random() + '').replace('.', '').substr(1, 6);
 var nickname = '';
 
 var comet;
-var ccomet_host = '127.0.0.1:10000';
+var ccomet_host = '127.0.0.1:8081';
 
 var sign_url = 'http://' + ccomet_host + '/sign?';
 var pub_url  = 'http://' + ccomet_host + '/publish?';

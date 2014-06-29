@@ -64,8 +64,8 @@ int main()
     setlimit(100000);
 
     httpServer.add("/sign", sign_handler, NULL);
-    httpServer.add("/pub",  pub_handler, NULL);
-    httpServer.add("/sub",  sub_handler, NULL);
+    httpServer.add("/publish",  pub_handler, NULL);
+    httpServer.add("/subscribe",  sub_handler, NULL);
     httpServer.error(error_handler, NULL);
 
     INFO << "server starting" ;
