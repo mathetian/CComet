@@ -21,8 +21,8 @@ EventPool pool(1);
 ** We subclass MSGHandler and override a few of its virtual methods:
 **
 **   - connected()    is invoked when a connection we try either succeeds or fails.
-**   - receivedMsg()  is invoked when a message is received
-**   - sentMsg()      is invoked when a msg has been sent
+**   - received()  is invoked when a message is received
+**   - sent()      is invoked when a msg has been sent
 **   - closed()       is invoked when the socket has been closed
 **/
 class EchoClient : public MSGHandler
@@ -48,11 +48,11 @@ protected:
         memset(buff, 0, 20);
         sprintf(buff, "wait for me, I am %d", m_sock.fd());
 
-        write(Buffer(buff, true));
+        send(Buffer(buff, true));
     }
 
     /// Invoked when a message is received
-    virtual void receivedMsg(STATUS status, Buffer &receivedBuff)
+    virtual void received(STATUS status, Buffer &receivedBuff)
     {
         if(status == SUCC)
         {
@@ -62,7 +62,7 @@ protected:
     }
 
     /// Invoked when a msg has been sent
-    virtual void sentMsg(STATUS status, int len, int targetLen)
+    virtual void sent(STATUS status, int len, int targetLen)
     {
         if(status == SUCC)
         {

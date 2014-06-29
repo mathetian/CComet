@@ -2,24 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#ifndef _ACCEPTOR_H
-#define _ACCEPTOR_H
+#ifndef _HTTP_ACC_H
+#define _HTTP_ACC_H
 
-#include "Log.h"
-using namespace utils;
-
-#include "Handler.h"
-#include "EventLoop.h"
+#include "Acceptor.h"
 
 namespace sealedserver
 {
 
+class HttpServer;
+
+/**
+** Users shouldn't override this class
+**/
 template<class T>
-class TCPAcceptor : public Handler
+class HttpAcceptor : public Handler
 {
 public:
     /// Constructor
-    TCPAcceptor(EventLoop* loop, int localport) : Handler(loop)
+    HttpAcceptor(HttpServer *server, EventLoop* loop, int localport) : Handler(loop), server_(server)
     {
         NetAddress addr = NetAddress(localport);
 
@@ -27,28 +28,31 @@ public:
         attach();
         registerRead();
 
-        INFO << "TCPAcceptor Initialization: " << m_sock.getsockname();
+        INFO << "HttpAcceptor Initialization: " << m_sock.getsockname();
 
         assert(m_sock.status());
     }
 
     /// Destructor
-    virtual ~TCPAcceptor()
+    virtual ~HttpAcceptor()
     {
     }
 
-public:
+private:
     virtual void onReceiveEvent()
     {
-        Socket sock = wrap();
+        NetAddress a;
+        Socket sock = m_sock.accept(&a);
+
+        DEBUG << "New Connection, through socket(local): " << sock.fd();
+        DEBUG << "Corrsponding address:" << sock.getpeername();
 
         if (sock.status() == true)
         {
-            T* t = new T(getRandomLoop(), sock);
+            T* t = new T(server_, getRandomLoop(), sock);
         }
     }
 
-public:
     void onSendEvent() { }
 
     void onCloseEvent(ClsMtd st)
@@ -59,23 +63,8 @@ public:
         m_sock.close();
     }
 
-public:
-    Socket wrap()
-    {
-        NetAddress a;
-        Socket sock = m_sock.accept(&a);
-
-        DEBUG << "New Connection, through socket(local): " << sock.fd();
-        DEBUG << "Corrsponding address:" << sock.getpeername();
-
-        return sock;
-    }
-
-    EventLoop* getRLoop()
-    {
-        return getRandomLoop();
-    }
-
+private:
+    HttpServer *server_;
 };
 
 };
