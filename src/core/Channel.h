@@ -5,12 +5,13 @@
 #ifndef _CHANNEL_H
 #define _CHANNEL_H
 
-#include "Header.h"
 #include "Noncopyable.h"
 using namespace utils;
 
 #include "Subscriber.h"
-#include "HttpInstance.h"
+
+namespace ccomet
+{
 
 class Channel : public Noncopyable
 {
@@ -68,6 +69,8 @@ private:
 
     /// Channel Name
     string                   cname_;
+};
+
 };
 
 #endif

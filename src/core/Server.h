@@ -8,16 +8,19 @@
 #include "Noncopyable.h"
 using namespace utils;
 
+#include "HttpRequest.h"
+#include "HttpResponse.h"
+using namespace sealedserver;
+
 #include "Channel.h"
-#include "HttpInstance.h"
+
+namespace ccomet
+{
 
 enum STATUS1 {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD};
 
 class Server : public Noncopyable
 {
-public:
-    typedef map<string, string> Params;
-
 public:
     /// Singleton
     static Server& Instance();
@@ -38,9 +41,9 @@ public:
     /// 
     /// /sign?channel=channel1&sname=user1&callback=callback
     ///
-    /// @param keys   , params   
-    ///        handler, the instance of Handler
-    STATUS1 sign(Params &keys, HttpInstance* handler);
+    /// @param req , HttpRequest   
+    ///        rep , HttpResponse
+    STATUS1 sign(HttpRequest *req, HttpResponse *rep);
         
     /// Publish, publish a message
     /// Send a message to all active users
@@ -48,18 +51,21 @@ public:
     ///
     /// /publish?channel=channel1&sname=user2&callback=callback&msg=helloworld
     ///
-    /// @param keys   , params   
-    ///        handler, the instance of Handler
-    STATUS1 publish(Params &keys, HttpInstance* handler);
+    /// @param req , HttpRequest   
+    ///        rep , HttpResponse
+    STATUS1 publish(HttpRequest *req, HttpResponse *rep);
     
     /// Subscribe, subscribe with special channel
     /// Wait for reply
     ///
     /// /subscribe?channel=channel1&sname=user1&seqid=0&callback=callback
     /// 
-    /// @param keys   , params   
-    ///        handler, the instance of Handler
-    STATUS1 subscribe(Params &keys, HttpInstance* handler);
+    /// @param req , HttpRequest   
+    ///        rep , HttpResponse
+    STATUS1 subscribe(HttpRequest *req, HttpResponse *rep);
+
+    /// error query string 
+    STATUS1 error(HttpRequest *req, HttpResponse *rep);
 
 private:
     /// GetChannel with the channel name(`cname`)
@@ -74,8 +80,27 @@ private:
     Channel* newChannel(const string &cname);
 
 private:
+    /// Helper function for error in params
+    void     errorInParams(HttpRequest *req, HttpResponse *rep);
+
+    /// Helper function for error in duplicated chain or others
+    void     errorInOthers(HttpRequest *req, HttpResponse *rep);
+
+    /// Helper function invoked when sign in/publish successfully
+    ///
+    /// @param type, 0 sign in
+    ///            , 1 publish
+    void     succeed(HttpRequest *req, HttpResponse *rep, int type);
+
+private:
     /// All channels created since the starting of server
     /// The key of channels is the cname(channel name)
     map<string, Channel*> channels_;
+
+    /// Short for params in query string
+    typedef map<string, string> Params;
 };
+
+};
+
 #endif

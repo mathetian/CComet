@@ -4,8 +4,14 @@
 
 #include "Header.h"
 
+#include "C.h"
+using namespace utils;
+
 #include "Channel.h"
 #include "Subscriber.h"
+
+namespace ccomet
+{
 
 Channel::Channel(string cname) : cname_(cname) 
 { 
@@ -113,3 +119,5 @@ void Channel::sendSign(const string &message)
 
     subscribers_.clear();
 }
+
+};

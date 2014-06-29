@@ -2,59 +2,59 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
+#include "Server.h"
 #include "Channel.h"
 #include "Subscriber.h"
-#include "HttpInstance.h"
+
+namespace ccomet
+{
 
 Subscriber::Subscriber(string sname, int seqid, string callback, 
-                         Server *server, Channel *channel, HttpInstance *handler)
+                         Server *server, Channel *channel, HttpRequest *req, HttpResponse *rep)
     : sname_(sname), seqid_(seqid), callback_(callback), 
-        server_(server),  channel_(channel), handler_(handler)
+        server_(server),  channel_(channel), handler_(handler), req_(req), rep_(rep)
 {
     channel_ -> add(this);
-    handler_ -> attachSubscriber(this);
 }
 
 Subscriber::~Subscriber()
 {
-    channel_ -> del(this);
+    close();
 }
 
 void Subscriber::send(const string &message)
 {
-    handler_ -> send(concat(message));
+    rep_ -> addBody(concat(message));
+    rep_ -> send();
 }
 
-void Subscriber::sendHistory()
-{
-    string message = channel_ -> getHistory();
-    handler_ -> send(concat(message));
-}
-
-void Subscriber::check()
+bool Subscriber::check()
 {
     if(seqid_ > channel_ -> getMxID())
     {
-        /// TBD, write exceed information
+        channel_ -> del(this);
 
-        string lcallback; string rcallback;
+        rep_ -> addBody(concat("{\"type\" : \"403\"}"));
+        rep_ -> send();
         
-        lcallback = callback_ + "('[";
-        rcallback = "]')";
-        
-        handler_ -> send(lcallback + "{\"type\" : \"403\"}" + rcallback);
+        return false;
     }
-
-    if(seqid_ < channel_ -> getMxID())
+    else if(seqid_ < channel_ -> getMxID())
     {
         string message = channel_ -> getSubHistory(seqid_);
-        handler_ -> send(concat(message));
+        
+        rep_ -> addBody(concat("{\"type\" : \"403\"}"));
+        rep_ -> send();
+        
+        return false;        
     }
+
+    return true;
 }
 
 void Subscriber::close()
 {
-    /// TBD
+    channel_ -> del(this);
 }
 
 string Subscriber::getName() const
@@ -66,3 +66,5 @@ string Subscriber::concat(const string &message)
 {   
     return callback_ + "('[" + message + "]')";
 }
+
+};

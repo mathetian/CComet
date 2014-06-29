@@ -3,6 +3,10 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "Server.h"
+#include "HttpParser.h"
+
+namespace ccomet
+{
 
 /// Singleton
 Server& Server::Instance()
@@ -19,70 +23,83 @@ Server::~Server()
 {
 }
 
-STATUS1 Server::sign(Params &keys, HttpInstance* handler)
+STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
 {
-    /// channel, sname, callback
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end() 
-            || keys.find("callback") == keys.end())
-        return ERRPARAM;
+    HttpParser *parser = req    -> getParser();
+    Params      params = parser -> getParams();
 
-    string cname    = keys["channel"];
-    string sname    = keys["sname"];
-    string callback = keys["callback"];
+    /// channel, sname, callback
+    if(params.find("channel") == params.end() || params.find("sname") == params.end() 
+            || params.find("callback") == params.end())
+    {
+        errorInParams();
+        return ERRPARAM;
+    }
+
+    string cname    = params["channel"];
+    string sname    = params["sname"];
+    string callback = params["callback"];
 
     Channel     *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
 
     /// Find the subscriber
     Subscriber *subscriber = channel -> find(sname);
-    if(subscriber) return ERRDULPE;
+    if(subscriber) {
+        errorInOthers();
+        return ERRDULPE;
+    }
     
     /// Tell others in the same channel that somebody has logined in.
     string msg = channel -> format(keys, "SIGN");
     channel -> sendSign(msg);
 
-    // /// Create the subscriber
-    // if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
-    
-    // /// Send old message
-    // subscriber -> sendHistory();
+    succeed(req, rep, 0);
 
     return SUCCEEED;
 }
 
-STATUS1 Server::publish(Params &keys, HttpInstance* handler)
+STATUS1 Server::publish(HttpRequest *req, HttpResponse *rep)
 {
-    /// channel, sname, msg, callback
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
-            || keys.find("msg") == keys.end() || keys.find("callback") == keys.end())
-        return ERRPARAM;
+    HttpParser *parser = req -> getParser();
+    Params      params = parser -> getParams();
 
-    string cname = keys["channel"];
-    string sname = keys["sname"];
-    string msg   = keys["msg"];
-    string callback = keys["callback"];
+    /// channel, sname, msg, callback
+    if(params.find("channel") == params.end() || params.find("sname") == params.end()
+            || params.find("msg") == params.end() || params.find("callback") == params.end())
+    {
+        errorInParams(req, rep);
+        return ERRPARAM;
+    }
+
+    string cname = params["channel"];
+    string sname = params["sname"];
+    string msg   = params["msg"];
+    string callback = params["callback"];
 
     Channel *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
 
-    // /// Find the subscriber
-    // Subscriber *subscriber = channel -> find(sname);
-
-    // /// Create the subscriber if not exist
-    // if(!subscriber) subscriber = new Subscriber(sname, 0, callback, this, channel, handler);
-
     string smsg = channel->format(keys, "MSG");
     channel -> sendChat(smsg);
+
+    succeed(req, rep, 1);
 
     return SUCCEEED;
 }
 
-STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
+STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
 {
+    HttpParser *parser = req -> getParser();
+    Params      params = parser -> getParams();
+
     /// channel, sname, seqid, callback
-    if(keys.find("channel") == keys.end() || keys.find("sname") == keys.end()
-            || keys.find("seqid") == keys.end() || !is_int(keys["seqid"]) || keys.find("callback") == keys.end())
+    if(params.find("channel") == params.end() || params.find("sname") == params.end()
+            || params.find("seqid") == params.end() || !is_int(params["seqid"]) || params.find("callback") == keys.end())
+    {
+        errorInParams();
         return ERRPARAM;
+    }
 
     string cname     = keys["channel"];
     string sname     = keys["sname"];
@@ -96,14 +113,29 @@ STATUS1 Server::subscribe(Params &keys, HttpInstance *handler)
     Subscriber *subscriber = channel -> find(sname);
 
     /// Can't duplicate
-    if(subscriber) return ERRDULPE;
+    if(subscriber) {
+        errorInOthers(req, rep);
+        return ERRDULPE;
+    }
 
     /// Create the subscriber if not exist
-    if(!subscriber) subscriber = new Subscriber(sname, seqid, callback, this, channel, handler);
+    if(!subscriber) subscriber = new Subscriber(sname, seqid, callback, this, channel, req, rep);
 
-    subscriber -> check();
+    if(subscriber -> check() == false)
+    {
+        delete subscriber;
+        subscriber = NULL;
+    }
     
     return SUCCEEED;
+}
+
+STATUS1 Server::error(HttpRequest *req, HttpResponse *rep)
+{
+    /// TBD. We use the notfund here
+    /// Anyone can add anything they need
+
+    req -> notfund();
 }
 
 Channel* Server::getChannel(const string &name)
@@ -122,3 +154,54 @@ Channel* Server::newChannel(const string &cname)
     
     return channel;
 }
+
+static void getlr(HttpRequest *req, string &lcallback, string &rcallback)
+{
+    map<string, string> params =  req -> getParams();
+
+    if(params_.find("callback") != params_.end())
+    {
+        lcallback = params_["callback"] + "('[";
+        rcallback = "]')";
+    }
+}
+
+void     Server::errorInParams(HttpRequest *req, HttpResponse *rep)
+{
+    string lcallback; string rcallback;
+    getlr(req, lcallback, rcallback);  
+
+    rep -> addBody(lcallback + "{\"type\" : \"400\"}" + rcallback);    
+
+    rep -> send();
+}   
+
+void     Server::errorInOthers(HttpRequest *req, HttpResponse *rep)
+{
+    string lcallback; string rcallback;
+    getlr(req, lcallback, rcallback);
+
+    rep -> addBody(lcallback + "{\"type\" : \"401\"}" + rcallback);    
+
+    rep -> send();
+}
+
+void     Server::succeed(HttpRequest *req, HttpResponse *rep, int type)
+{
+    string lcallback; string rcallback;
+    getlr(req, lcallback, rcallback);
+
+    if(type == 0)
+    {
+        rep -> addBody(lcallback + "{\"type\" : \"sign in\"}" + rcallback);
+    }
+    else
+    {
+        rep -> addBody(lcallback + "{\"type\" : \"publish\"}" + rcallback);
+    }
+
+    rep -> send();
+}
+
+
+};

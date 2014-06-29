@@ -8,11 +8,15 @@
 #include "Noncopyable.h"
 using namespace utils;
 
-#include "Header.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
+using namespace sealedserver;
+
+namespace ccomet
+{
 
 class Server;
 class Channel;
-class HttpInstance;
 
 /**
 ** Each user will be a subscriber
@@ -21,7 +25,8 @@ class Subscriber : public Noncopyable
 {
 public:
     /// Constructor
-    Subscriber(string sname, int seqid, string callback, Server *server, Channel *channel, HttpInstance *instance);
+    Subscriber(string sname, int seqid, string callback, Server *server, Channel *channel,
+            HttpRequest *req, HttpResponse *rep);
 
     /// Destructor
     virtual ~Subscriber();
@@ -29,12 +34,12 @@ public:
 public:
     /// Send single message
     void   send(const string &message);
-    
-    /// Send multiple messages
-    void   sendHistory();
 
     /// Check wthether send old data(seqid2updated id)
-    void   check();
+    ///
+    /// @return false, can remove it
+    ///         true , sub successfully
+    bool   check();
 
     /// Close the handler_(detach and remove from memory)
     void   close();
@@ -54,9 +59,6 @@ private:
     /// Each user will belong to a channel
     Channel *channel_;
 
-    /// Each user will have a instance of HttpInstance
-    HttpInstance *handler_;
-
     /// Each user will have a name(or id)
     string  sname_;
 
@@ -65,6 +67,12 @@ private:
 
     /// Each user will keep the name of callback in memory
     string  callback_;    
+
+    /// Http Request/Response
+    HttpRequest  *req_;
+    HttpResponse *rep_;
+};
+
 };
 
 #endif
