@@ -29,7 +29,7 @@ STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
     Params      params = parser -> getParams();
 
     /// channel, sname, callback
-    if(params.find("channel") == params.end() || params.find("sname") == params.end() 
+    if(params.find("channel") == params.end() || params.find("sname") == params.end()
             || params.find("callback") == params.end())
     {
         errorInParams(req, rep);
@@ -45,11 +45,12 @@ STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
 
     /// Find the subscriber
     Subscriber *subscriber = channel -> find(sname);
-    if(subscriber) {
+    if(subscriber)
+    {
         errorInOthers(req, rep);
         return ERRDULPE;
     }
-    
+
     /// Tell others in the same channel that somebody has logined in.
     string msg = channel -> format(params, "SIGN");
     channel -> sendSign(msg);
@@ -113,7 +114,8 @@ STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
     Subscriber *subscriber = channel -> find(sname);
 
     /// Can't duplicate
-    if(subscriber) {
+    if(subscriber)
+    {
         errorInOthers(req, rep);
         return ERRDULPE;
     }
@@ -126,7 +128,7 @@ STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
         delete subscriber;
         subscriber = NULL;
     }
-    
+
     return SUCCEEED;
 }
 
@@ -149,9 +151,9 @@ Channel* Server::getChannel(const string &name)
 Channel* Server::newChannel(const string &cname)
 {
     Channel *channel= new Channel(cname);
-    
+
     channels_[cname] = channel;
-    
+
     return channel;
 }
 
@@ -169,27 +171,30 @@ static void getlr(HttpRequest *req, string &lcallback, string &rcallback)
 
 void     Server::errorInParams(HttpRequest *req, HttpResponse *rep)
 {
-    string lcallback; string rcallback;
-    getlr(req, lcallback, rcallback);  
+    string lcallback;
+    string rcallback;
+    getlr(req, lcallback, rcallback);
 
-    rep -> addBody(lcallback + "{\"type\" : \"400\"}" + rcallback);    
+    rep -> addBody(lcallback + "{\"type\" : \"400\", \"reason\" : \"error params\"}" + rcallback);
 
     rep -> send();
-}   
+}
 
 void     Server::errorInOthers(HttpRequest *req, HttpResponse *rep)
 {
-    string lcallback; string rcallback;
+    string lcallback;
+    string rcallback;
     getlr(req, lcallback, rcallback);
 
-    rep -> addBody(lcallback + "{\"type\" : \"401\"}" + rcallback);    
+    rep -> addBody(lcallback + "{\"type\" : \"401\", \"reason\" : \"subscribe/sign at the same time\"}" + rcallback);
 
     rep -> send();
 }
 
 void     Server::succeed(HttpRequest *req, HttpResponse *rep, int type)
 {
-    string lcallback; string rcallback;
+    string lcallback;
+    string rcallback;
     getlr(req, lcallback, rcallback);
 
     if(type == 0)

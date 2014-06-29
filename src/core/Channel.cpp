@@ -13,8 +13,8 @@ using namespace utils;
 namespace ccomet
 {
 
-Channel::Channel(string cname) : cname_(cname) 
-{ 
+Channel::Channel(string cname) : cname_(cname)
+{
 
 }
 
@@ -42,10 +42,10 @@ bool Channel::add(Subscriber *subscriber)
 bool Channel::del(Subscriber *subscriber)
 {
     string name = subscriber -> getName();
-    
+
     if(subscribers_.find(name) == subscribers_.end())
         return false;
-    
+
     subscribers_.erase(name);
     return true;
 }
@@ -54,10 +54,10 @@ string Channel::format(Params &keys, string type)
 {
     string name   = keys["sname"], msg;
     string seq_id = to_string(history_.size());
-    
-    if(type == "SIGN") 
+
+    if(type == "SIGN")
         msg = "SIGN";
-    else 
+    else
         msg = keys["msg"];
 
     string str = "{";
@@ -75,7 +75,7 @@ string Channel::getHistory() const
 {
     string msg;
 
-    for(int i = 0;i < history_.size();i++)
+    for(int i = 0; i < history_.size(); i++)
     {
         if(i != 0) msg += ",";
         msg += history_.at(i);
@@ -88,7 +88,7 @@ string Channel::getSubHistory(int seqid) const
 {
     string msg;
 
-    for(int i = seqid;i < history_.size();i++)
+    for(int i = seqid; i < history_.size(); i++)
     {
         if(i != seqid) msg += ",";
         msg += history_.at(i);
@@ -111,8 +111,8 @@ void Channel::sendChat(const string &message)
 void Channel::sendSign(const string &message)
 {
     map<string, Subscriber*>::iterator iter = subscribers_.begin();
-    
-    for(;iter != subscribers_.end();iter++)
+
+    for(; iter != subscribers_.end(); iter++)
     {
         ((*iter).second) -> send(message);
     }

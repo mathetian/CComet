@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     const char *ip = "127.0.0.1";
     int        opt = 1;
     int        bufsize;
-    
+
     socklen_t optlen;
     int connections = 0;
 

@@ -13,7 +13,7 @@ using namespace sealedserver;
 #include "Server.h"
 using namespace ccomet;
 
-#define      Port 808
+#define      Port 8081
 HttpServer   httpServer(Port);
 Server      &server = Server::Instance();
 
@@ -62,7 +62,7 @@ int main()
 
     ::signal(SIGINT, signalStop);
     setlimit(100000);
-    
+
     httpServer.add("/sign", sign_handler, NULL);
     httpServer.add("/pub",  pub_handler, NULL);
     httpServer.add("/sub",  sub_handler, NULL);

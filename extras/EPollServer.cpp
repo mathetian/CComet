@@ -174,7 +174,8 @@ int main(int argc, char **argv)
                     assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
                     ::close(msg->getFD());
                     imsgs.erase(msg->getFD());
-                    delete msg; msg = NULL;
+                    delete msg;
+                    msg = NULL;
                 }
                 else
                 {
@@ -199,12 +200,13 @@ int main(int argc, char **argv)
                                 assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
                                 ::close(msg->getFD());
                                 imsgs.erase(msg->getFD());
-                                delete msg; msg = NULL;
+                                delete msg;
+                                msg = NULL;
                                 break;
                             }
                             else
                             {
-                                printf("%s\n", buf);       
+                                printf("%s\n", buf);
                             }
                         }
                     }
@@ -221,7 +223,7 @@ int main(int argc, char **argv)
                         }
                         else if(ret < 0) goto sock_err;
                         else
-                        { 
+                        {
                             struct epoll_event ev = {0, {0}};
                             ev.data.fd = msg->getFD();
                             ev.events  = EPOLLIN | EPOLLET;

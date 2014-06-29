@@ -26,7 +26,7 @@ class Subscriber : public Noncopyable
 public:
     /// Constructor
     Subscriber(string sname, int seqid, string callback, Server *server, Channel *channel,
-            HttpRequest *req, HttpResponse *rep);
+               HttpRequest *req, HttpResponse *rep);
 
     /// Destructor
     virtual ~Subscriber();
@@ -47,7 +47,7 @@ public:
 public:
     /// Get the name(id) of the subscriber
     string getName() const;
-    
+
 private:
     /// Concat message with  `callback`
     string  concat(const string &message);
@@ -66,7 +66,7 @@ private:
     int     seqid_;
 
     /// Each user will keep the name of callback in memory
-    string  callback_;    
+    string  callback_;
 
     /// Http Request/Response
     HttpRequest  *req_;

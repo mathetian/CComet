@@ -9,10 +9,10 @@
 namespace ccomet
 {
 
-Subscriber::Subscriber(string sname, int seqid, string callback, 
-                Server *server, Channel *channel, HttpRequest *req, HttpResponse *rep)
-    : sname_(sname), seqid_(seqid), callback_(callback), 
-        server_(server),  channel_(channel), req_(req), rep_(rep)
+Subscriber::Subscriber(string sname, int seqid, string callback,
+                       Server *server, Channel *channel, HttpRequest *req, HttpResponse *rep)
+    : sname_(sname), seqid_(seqid), callback_(callback),
+      server_(server),  channel_(channel), req_(req), rep_(rep)
 {
     channel_ -> add(this);
 }
@@ -36,17 +36,17 @@ bool Subscriber::check()
 
         rep_ -> addBody(concat("{\"type\" : \"403\"}"));
         rep_ -> send();
-        
+
         return false;
     }
     else if(seqid_ < channel_ -> getMxID())
     {
         string message = channel_ -> getSubHistory(seqid_);
-        
+
         rep_ -> addBody(concat("{\"type\" : \"403\"}"));
         rep_ -> send();
-        
-        return false;        
+
+        return false;
     }
 
     return true;
@@ -63,7 +63,7 @@ string Subscriber::getName() const
 }
 
 string Subscriber::concat(const string &message)
-{   
+{
     return callback_ + "('[" + message + "]')";
 }
 

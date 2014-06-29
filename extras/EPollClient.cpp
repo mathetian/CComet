@@ -92,7 +92,7 @@ int main()
     int index = 0;
     while(1)
     {
-        for(int i=0;i<100&&index<10000;i++)
+        for(int i=0; i<100&&index<10000; i++)
         {
             int port = BASE_PORT + (index%DEFAULT_NUM);
             index++;
@@ -130,7 +130,7 @@ int main()
         }
 
         int ret = epoll_wait(m_epollFD, events, MAX_NEVENTS, 5000);
-    
+
         if(ret < 0)
         {
             if(errno == EINTR)
@@ -153,7 +153,8 @@ int main()
                 assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
                 ::close(msg->getFD());
                 imsgs.erase(msg->getFD());
-                delete msg; msg = NULL;
+                delete msg;
+                msg = NULL;
             }
             else
             {
@@ -178,7 +179,8 @@ int main()
                             assert(epoll_ctl(m_epollFD, EPOLL_CTL_DEL, msg->getFD(), NULL) == 0);
                             ::close(msg->getFD());
                             imsgs.erase(msg->getFD());
-                            delete msg; msg = NULL;
+                            delete msg;
+                            msg = NULL;
                             break;
                         }
                         else
@@ -195,7 +197,7 @@ int main()
                             else
                             {
                             }
-                                
+
                         }
                     }
                 }
@@ -212,7 +214,7 @@ int main()
                     }
                     else if(ret < 0) goto sock_err;
                     else
-                    { 
+                    {
                         struct epoll_event ev = {0, {0}};
                         ev.data.fd = msg->getFD();
                         ev.events  = EPOLLIN | EPOLLET;

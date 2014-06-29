@@ -36,12 +36,13 @@ protected:
     /// Invoked when a connection we try either succeeds or fails.
     virtual void connected()
     {
-       char buf[1024];
-       
-       sprintf(buf, "GET /subscribe?channel=%s%d&sname=%d&callback=%s&seqid=0 sss", \
-            "channelname", rand()%10000, globalid, "callback");
-       
-       globalid++; write(buf);
+        char buf[1024];
+
+        sprintf(buf, "GET /subscribe?channel=%s%d&sname=%d&callback=%s&seqid=0 sss", \
+                "channelname", rand()%10000, globalid, "callback");
+
+        globalid++;
+        write(buf);
     }
 
     /// Invoked when a message is received
@@ -135,7 +136,7 @@ int setlimit(int num_pipes)
 
 int main()
 {
-     Log::setLevel(Log::info);
+    Log::setLevel(Log::info);
 
     ::signal(SIGINT, signalStop);
     setlimit(100000);
@@ -144,10 +145,10 @@ int main()
     pool.subrun();
 
     ClientSimulator simulator(BASE_PORT);
-    
+
     pool.subjoin();
 
     INFO << "End of Main";
-    
+
     return 0;
 }

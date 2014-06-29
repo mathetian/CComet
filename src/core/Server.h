@@ -38,33 +38,33 @@ public:
     /// Sign, sign in with the server
     /// Send a token back to the `user`
     /// It will send a message to all active users
-    /// 
+    ///
     /// /sign?channel=channel1&sname=user1&callback=callback
     ///
-    /// @param req , HttpRequest   
+    /// @param req , HttpRequest
     ///        rep , HttpResponse
     STATUS1 sign(HttpRequest *req, HttpResponse *rep);
-        
+
     /// Publish, publish a message
     /// Send a message to all active users
     /// And add this messge to history
     ///
     /// /publish?channel=channel1&sname=user2&callback=callback&msg=helloworld
     ///
-    /// @param req , HttpRequest   
+    /// @param req , HttpRequest
     ///        rep , HttpResponse
     STATUS1 publish(HttpRequest *req, HttpResponse *rep);
-    
+
     /// Subscribe, subscribe with special channel
     /// Wait for reply
     ///
     /// /subscribe?channel=channel1&sname=user1&seqid=0&callback=callback
-    /// 
-    /// @param req , HttpRequest   
+    ///
+    /// @param req , HttpRequest
     ///        rep , HttpResponse
     STATUS1 subscribe(HttpRequest *req, HttpResponse *rep);
 
-    /// error query string 
+    /// error query string
     STATUS1 error(HttpRequest *req, HttpResponse *rep);
 
 private:
