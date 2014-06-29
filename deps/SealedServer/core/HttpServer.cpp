@@ -30,12 +30,12 @@ void HttpServer::stop()
     pool_.stop();
 }
 
-void HttpServer::add(const string &url, Callback callback, void *arg)
+void HttpServer::add(const string &url, Call callback, void *arg)
 {
     calls_[url] = make_pair(callback, arg);
 }
 
-void HttpServer::error(Callback callback, void *arg)
+void HttpServer::error(Call callback, void *arg)
 {
     error_   = make_pair(callback, arg);
     errflag_ = true;
@@ -51,8 +51,8 @@ bool HttpServer::process(HttpRequest *conn)
 
         if(errflag_)
         {
-            Callback callback = error_.first;
-            void    *arg      = error_.second;
+            Call callback = error_.first;
+            void    *arg  = error_.second;
 
             callback(conn, conn -> getResponse(), arg);
         }
@@ -65,7 +65,7 @@ bool HttpServer::process(HttpRequest *conn)
     {
         conn -> initResponse(200);
 
-        Callback callback = calls_[query].first;
+        Call     callback = calls_[query].first;
         void    *arg      = calls_[query].second;
         callback(conn, conn -> getResponse(),arg);
     }

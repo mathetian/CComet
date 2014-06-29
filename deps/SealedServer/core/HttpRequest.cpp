@@ -11,14 +11,16 @@ namespace sealedserver
 {
 
 HttpRequest::HttpRequest(HttpServer *server, EventLoop *loop, Socket sock) : \
-    MSGHandler(loop, sock), server_(server), errcode_(0), first_(false), client_(NULL)
+    MSGHandler(loop, sock), server_(server), errcode_(0), \
+        first_(false), client_(NULL), clsflag_(false)
 {
     /// TBD
     parser_ = new HttpParser(0);
 }
 
 HttpRequest::HttpRequest(HttpClient *client, string url, EventLoop *loop, Socket sock) : \
-    MSGHandler(loop, sock), server_(NULL), errcode_(0), first_(false), client_(client), url_(url)
+    MSGHandler(loop, sock), server_(NULL), errcode_(0), first_(false), \
+        client_(client), url_(url), clsflag_(false)
 {
     /// TBD
     parser_ = new HttpParser(1);
@@ -80,6 +82,11 @@ void HttpRequest::received(STATUS status, Buffer &receivedBuff)
     }
 }
 
+void HttpRequest::close()
+{
+    MSGHandler::close();
+}
+
 void HttpRequest::sent(STATUS status, int len, int targetLen)
 {
     if(server_ != NULL)
@@ -130,6 +137,11 @@ HttpParser* HttpRequest::getParser()
 HttpResponse* HttpRequest::getResponse()
 {
     return response_;
+}
+
+void          HttpRequest::registerCallback()
+{
+    
 }
 
 };
