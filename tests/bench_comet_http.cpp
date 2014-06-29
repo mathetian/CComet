@@ -11,7 +11,7 @@ HttpClient client;
 
 #define BASE_PORT 8081
 
-#define CLIENT_NUM 200000
+#define CLIENT_NUM 10000
 
 void get(HttpRequest *req, void *arg)
 {
@@ -57,7 +57,7 @@ int main()
     
     for(int i = 0; i < CLIENT_NUM ;i++){
         stringstream ss;
-        ss << "127.0.0.1:8082/sign?channel=channel1&sname=user" << i << "&seqid=0&callback=callback";
+        ss << "127.0.0.1:8081/subscribe?channel=channel" << i << "&sname=user" << i << "&seqid=0&callback=callback";
         client.request(ss.str(), get, error, NULL);
    
     }
