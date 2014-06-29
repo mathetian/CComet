@@ -6,7 +6,7 @@ HEADER  = -I./deps/SealedServer/include -I./deps/SealedServer/utils -I./src/core
 CXXFLAGS = -g -O0
 PTHRFLAGS = -lpthread -pthread
 
-SOURCES = src/core/*.cpp
+SOURCES = src/core/*.cpp src/*.cpp
 
 tests = test_squeue test_buffer test_callback test_log test_slice test_tostring
 

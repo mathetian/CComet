@@ -32,7 +32,7 @@ STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
     if(params.find("channel") == params.end() || params.find("sname") == params.end() 
             || params.find("callback") == params.end())
     {
-        errorInParams();
+        errorInParams(req, rep);
         return ERRPARAM;
     }
 
@@ -46,12 +46,12 @@ STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
     /// Find the subscriber
     Subscriber *subscriber = channel -> find(sname);
     if(subscriber) {
-        errorInOthers();
+        errorInOthers(req, rep);
         return ERRDULPE;
     }
     
     /// Tell others in the same channel that somebody has logined in.
-    string msg = channel -> format(keys, "SIGN");
+    string msg = channel -> format(params, "SIGN");
     channel -> sendSign(msg);
 
     succeed(req, rep, 0);
@@ -80,7 +80,7 @@ STATUS1 Server::publish(HttpRequest *req, HttpResponse *rep)
     Channel *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
 
-    string smsg = channel->format(keys, "MSG");
+    string smsg = channel->format(params, "MSG");
     channel -> sendChat(smsg);
 
     succeed(req, rep, 1);
@@ -95,16 +95,16 @@ STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
 
     /// channel, sname, seqid, callback
     if(params.find("channel") == params.end() || params.find("sname") == params.end()
-            || params.find("seqid") == params.end() || !is_int(params["seqid"]) || params.find("callback") == keys.end())
+            || params.find("seqid") == params.end() || !is_int(params["seqid"]) || params.find("callback") == params.end())
     {
-        errorInParams();
+        errorInParams(req, rep);
         return ERRPARAM;
     }
 
-    string cname     = keys["channel"];
-    string sname     = keys["sname"];
-    int seqid        = to_int(keys["seqid"]);
-    string callback  = keys["callback"];
+    string cname     = params["channel"];
+    string sname     = params["sname"];
+    int seqid        = to_int(params["seqid"]);
+    string callback  = params["callback"];
 
     Channel *channel = getChannel(cname);
     if(!channel) channel = newChannel(cname);
@@ -135,7 +135,7 @@ STATUS1 Server::error(HttpRequest *req, HttpResponse *rep)
     /// TBD. We use the notfund here
     /// Anyone can add anything they need
 
-    req -> notfund();
+    req -> notFound();
 }
 
 Channel* Server::getChannel(const string &name)
@@ -157,11 +157,12 @@ Channel* Server::newChannel(const string &cname)
 
 static void getlr(HttpRequest *req, string &lcallback, string &rcallback)
 {
-    map<string, string> params =  req -> getParams();
+    HttpParser *parser = req -> getParser();
+    map<string, string> params =  parser -> getParams();
 
-    if(params_.find("callback") != params_.end())
+    if(params.find("callback") != params.end())
     {
-        lcallback = params_["callback"] + "('[";
+        lcallback = params["callback"] + "('[";
         rcallback = "]')";
     }
 }

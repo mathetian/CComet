@@ -15,7 +15,7 @@ using namespace ccomet;
 
 #define      Port 808
 HttpServer   httpServer(Port);
-Server       server;
+Server      &server = Server::Instance();
 
 void sign_handler(HttpRequest *req, HttpResponse *rep, void *arg)
 {
@@ -29,7 +29,7 @@ void pub_handler(HttpRequest *req, HttpResponse *rep, void *arg)
 
 void sub_handler(HttpRequest *req, HttpResponse *rep, void *arg)
 {
-    server.subscribe(rqq, rep);
+    server.subscribe(req, rep);
 }
 
 void error_handler(HttpRequest *req, HttpResponse *rep, void *arg)
@@ -41,7 +41,7 @@ void error_handler(HttpRequest *req, HttpResponse *rep, void *arg)
 void signalStop(int)
 {
     INFO << "Stop running...by manually";
-    server.stop();
+    httpServer.stop();
 }
 
 /// Change the configure
@@ -69,7 +69,7 @@ int main()
     httpServer.error(error_handler, NULL);
 
     INFO << "server starting" ;
-    server.start();
+    httpServer.start();
     INFO << "server stopping" ;
 
     return 0;
