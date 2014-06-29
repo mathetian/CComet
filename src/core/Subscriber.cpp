@@ -30,6 +30,8 @@ void Subscriber::send(const string &message)
 
 bool Subscriber::check()
 {
+    rep_ -> addHeader("Content-Type", "text/javascript; charset=utf-8");
+
     if(seqid_ > channel_ -> getMxID())
     {
         channel_ -> del(this);

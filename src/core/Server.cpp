@@ -175,6 +175,8 @@ void     Server::errorInParams(HttpRequest *req, HttpResponse *rep)
     string rcallback;
     getlr(req, lcallback, rcallback);
 
+    rep -> addHeader("Content-Type", "text/javascript; charset=utf-8");
+
     rep -> addBody(lcallback + "{\"type\" : \"400\", \"reason\" : \"error params\"}" + rcallback);
 
     rep -> send();
@@ -185,6 +187,8 @@ void     Server::errorInOthers(HttpRequest *req, HttpResponse *rep)
     string lcallback;
     string rcallback;
     getlr(req, lcallback, rcallback);
+
+    rep -> addHeader("Content-Type", "text/javascript; charset=utf-8");
 
     rep -> addBody(lcallback + "{\"type\" : \"401\", \"reason\" : \"subscribe/sign at the same time\"}" + rcallback);
 
@@ -197,6 +201,8 @@ void     Server::succeed(HttpRequest *req, HttpResponse *rep, int type)
     string rcallback;
     getlr(req, lcallback, rcallback);
 
+    rep -> addHeader("Content-Type", "text/javascript; charset=utf-8");
+    
     if(type == 0)
     {
         rep -> addBody(lcallback + "{\"type\" : \"sign in\"}" + rcallback);
