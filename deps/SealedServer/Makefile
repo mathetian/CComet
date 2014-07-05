@@ -4,11 +4,11 @@ CXX     = g++
 AR	    = ar
 LIBMISC	= libsealedserver.a
 RANLIB  = ranlib
-HEADER  = -I. -I./include -I./utils
+HEADER  = -I. -I./include -I./utils -I./http
 CXXFLAGS = -g -O0
 PTHRFLAGS = -lpthread -pthread
 
-SOURCES = utils/*.cpp core/*.cpp
+SOURCES = utils/*.cpp core/*.cpp http/*.cpp
 LDLIBS  = -L. -lsealedserver
 
 tests = test_buffer test_c test_callback test_log test_slice test_squeue test_tester test_thread
@@ -32,6 +32,8 @@ server: tests/echo_server.cpp
 client: tests/echo_client.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LDLIBS}
 	mv $@ bin
+
+http: prepare http_server http_client
 
 http_server: tests/http_server.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LDLIBS}

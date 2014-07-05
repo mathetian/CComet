@@ -7,10 +7,10 @@ using namespace utils;
 
 #include "HttpParser.h"
 
-namespace sealedserver
+namespace http
 {
 
-HttpParser::HttpParser(int type) : type_(type)
+HttpParser::HttpParser(HttpParser::ParseType type) : type_(type)
 {
 
 }
@@ -25,17 +25,20 @@ bool HttpParser::parse(Buffer &receivedBuff)
     bool flag;
     flag = parseFirstLine(str, index);
 
-    if(flag == false) {
+    if(flag == false)
+    {
         return false;
     }
 
     flag = check();
-    if(flag == false) {
+    if(flag == false)
+    {
         return false;
     }
 
     flag = parseURL();
-    if(flag == false) {
+    if(flag == false)
+    {
         return false;
     }
 
@@ -98,7 +101,8 @@ bool HttpParser::parseHeader(string str, int &rindex)
     while(str.size() != 0)
     {
         int index = str.find("\r\n");
-        if(index == -1) {
+        if(index == -1)
+        {
             return false;
         }
 
@@ -106,7 +110,8 @@ bool HttpParser::parseHeader(string str, int &rindex)
 
         flag = parseLine(str.substr(0, index));
 
-        if(flag == false) {
+        if(flag == false)
+        {
             return false;
         }
 
@@ -128,13 +133,14 @@ bool HttpParser::parseLine(string str)
 }
 
 /// only support get
-int HttpParser::is_valid_http_method(const char *s) {
+int HttpParser::is_valid_http_method(const char *s)
+{
     return !strcmp(s, "GET");
 }
 
 bool HttpParser::check()
 {
-    if(type_ == 0)
+    if(type_ == REQUEST)
     {
         if(is_valid_http_method(method_.c_str()) == false)
             return false;
@@ -182,10 +188,12 @@ bool HttpParser::decode(string para)
             decodestr.push_back((char) ((HEXTOI(a) << 4) | HEXTOI(b)));
             i += 2;
         }
-        else if(para.at(i) == '+') {
+        else if(para.at(i) == '+')
+        {
             decodestr.push_back(' ');
         }
-        else {
+        else
+        {
             decodestr.push_back(para.at(i));
         }
     }

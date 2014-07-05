@@ -6,8 +6,9 @@
 #define _HTTP_ACC_H
 
 #include "Acceptor.h"
+using namespace sealedserver;
 
-namespace sealedserver
+namespace http
 {
 
 class HttpServer;
@@ -25,6 +26,7 @@ public:
         NetAddress addr = NetAddress(localport);
 
         m_sock = TCPSocket(&addr);
+
         attach();
         registerRead();
 
@@ -51,16 +53,6 @@ private:
         {
             T* t = new T(server_, getRandomLoop(), sock);
         }
-    }
-
-    void onSendEvent() { }
-
-    void onCloseEvent(ClsMtd st)
-    {
-        DEBUG << "close listen socket fd: " << m_sock.fd() << " " << st;
-
-        detach();
-        m_sock.close();
     }
 
 private:

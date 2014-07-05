@@ -3,13 +3,16 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "HttpServer.h"
+
+#include "HttpParser.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
-using namespace sealedserver;
+using namespace http;
 
 #define Port 8081
+#define PortNum 5
 
-HttpServer server(Port);
+HttpServer server(Port, PortNum);
 
 string concat(string key, string value)
 {

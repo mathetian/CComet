@@ -8,14 +8,13 @@
 #include "MsgHandler.h"
 using namespace sealedserver;
 
-#include "HttpParser.h"
-
-namespace sealedserver
+namespace http
 {
 
 class HttpServer;
 class HttpClient;
 class HttpResponse;
+class HttpParser;
 
 class HttpRequest : public MSGHandler
 {
@@ -85,12 +84,14 @@ public:
     **/
 
     /// Return the url
-    string getUrl() const {
+    string getUrl() const
+    {
         return url_;
     }
 
     /// Return the errcode_
-    int    getCode() const {
+    int    getCode() const
+    {
         return errcode_;
     }
 

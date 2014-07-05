@@ -11,7 +11,7 @@ using namespace sealedserver;
 #define BASE_PORT 10000
 #define PORT_NUM  1
 
-#define CLIENT_NUM 10000
+#define CLIENT_NUM 100000
 
 EventPool pool(1);
 
@@ -66,7 +66,7 @@ protected:
     {
         if(status == SUCC)
         {
-            DEBUG << "SendedMsg(to " <<  m_sock.fd() <<  " ):" << len << " " << targetLen;
+            DEBUG << "SendedMsg(to " <<  m_sock.fd() <<  "):" << len << " " << targetLen;
         }
         else assert(0);
     }
@@ -74,7 +74,7 @@ protected:
     /// Invoke when the socket has been closed
     virtual void closed(ClsMtd st)
     {
-        DEBUG << "onCloseSocket(for " <<  m_sock.fd() <<  " ):" << st;
+        DEBUG << "onCloseSocket(for " <<  m_sock.fd() <<  "):" << st;
         if(errno != 0) DEBUG << strerror(errno);
 
         errno = 0;
@@ -106,10 +106,12 @@ private:
             NetAddress svrAddr(ip, port + (i%PORT_NUM));
 
             Socket sock(AF_INET, SOCK_STREAM);
-            sock.connect(&svrAddr);
 
-            /// Check status of socket
-            /// TBD
+            if(sock.connect(&svrAddr) == false)
+            {
+                INFO << sock.status() ;
+                assert(0);
+            }
 
             EchoClient *client = new EchoClient(pool.getRandomLoop(), sock);
 
@@ -119,7 +121,7 @@ private:
                 getchar();
             }
 
-            usleep(1 * 1000);
+            usleep(5 * 1000);
         }
     }
 };
@@ -151,9 +153,11 @@ int main()
     setlimit(100000);
     errno = 0;
 
+    pool.subrun();
+
     ClientSimulator simulator(BASE_PORT);
 
-    pool.run();
+    pool.subjoin();
 
     INFO << "End of Main";
 

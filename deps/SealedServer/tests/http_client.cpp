@@ -3,9 +3,15 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "HttpClient.h"
+
+#include "HttpParser.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
-using namespace sealedserver;
+using namespace http;
+
+#define CLINUM 100000
+#define Port 8081
+#define PortNum 5
 
 HttpClient client;
 
@@ -51,10 +57,19 @@ int main()
     client.start();
 
     /// bbs.sjtu.edu.cn
-    client.request("202.120.58.161", get, error, NULL);
+    /// client.request("202.120.58.161", get, error, NULL);
 
     /// yulongti.info/?p=2761
-    client.request("128.199.204.82:80/?p=2761", get, error, NULL);
+    /// client.request("128.199.204.82/?p=2761", get, error, NULL);
+
+    for(int i = 0; i < CLINUM; i++)
+    {
+        stringstream ss; int port = Port + (i % PortNum);
+        ss << "127.0.0.1" << ":" << port << "/sub";
+
+        client.request(ss.str(), get, error, NULL);
+        usleep(5 * 1000);
+    }
 
     client.wait();
 

@@ -5,15 +5,15 @@
 #include "C.h"
 using namespace utils;
 
-#include "HttpParser.h"
-#include "HttpRequest.h"
 #include "HttpResponse.h"
 
-namespace sealedserver
+namespace http
 {
 
-static const char *status_code_to_str(int status_code) {
-    switch (status_code) {
+static const char *status_code_to_str(int status_code)
+{
+    switch (status_code)
+    {
     case 200:
         return "OK";
     case 201:
@@ -72,19 +72,24 @@ HttpResponse::HttpResponse(HttpRequest *request) : request_(request)
 
     assert(HttpParser::parseURL(url, host, port, qstr) == true);
 
-    stringstream ss1;
-    ss1 << host << ":" << port;
-    host = ss1.str();
+    if(port != 80)
+    {
+        stringstream ss1;
+        ss1 << host << ":" << port;
+        host = ss1.str();
+    }
 
-    stringstream ss;
-    ss << "GET " << qstr << " " << "HTTP/1.1" << "\r\n";
+    stringstream ss2;
+    ss2 << "GET " << qstr << " " << "HTTP/1.1" << "\r\n";
 
-    header_ = ss.str();
+    header_ = ss2.str();
 
     addHeader("Host", host);
     addHeader("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0");
+    addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
     addHeader("Accept-Language", "en-US,en;q=0.5");
     addHeader("Accept-Encoding", "gzip, deflate");
+    addHeader("Connection", "keep-alive");
 }
 
 HttpResponse::~HttpResponse()

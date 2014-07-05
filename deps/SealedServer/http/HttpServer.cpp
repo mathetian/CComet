@@ -4,29 +4,31 @@
 
 #include "HttpServer.h"
 
-namespace sealedserver
+namespace http
 {
 
-HttpServer::HttpServer(int port) : port_(port), errflag_(false)
+HttpServer::HttpServer(int port, int portnum) : port_(port), errflag_(false), portnum_(portnum)
 {
-    acceptor_ = new HttpAcceptor<HttpRequest>(this, pool_.getRandomLoop(), port);
+    acceptors_ = vector<HttpAcceptor<HttpRequest>*>(portnum);
+
+    for(int i = 0; i < portnum ; i++)
+        acceptors_[i] = new HttpAcceptor<HttpRequest>(this, pool_.getRandomLoop(), port + i);
 }
 
-HttpServer::HttpServer(int port, int place) : port_(port), errflag_(false)
+HttpServer::HttpServer(int port, int portnum, int place) : port_(port), errflag_(false), portnum_(portnum)
 {
-    
+
 }
 
 HttpServer::~HttpServer()
 {
     pool_.stop();
 
-    if(acceptor_)
+    for(int i = 0; i < portnum_ ; i++)
     {
-        delete acceptor_;
+        delete acceptors_[i];
+        acceptors_[i] = NULL;
     }
-    
-    acceptor_ = NULL;
 }
 
 void HttpServer::start()
@@ -50,33 +52,33 @@ void HttpServer::error(Callback callback, void *arg)
     errflag_ = true;
 }
 
-bool HttpServer::process(HttpRequest *conn)
+bool HttpServer::process(HttpRequest *req)
 {
-    string query = conn -> getQuery();
+    string query = req -> getQuery();
 
     if(calls_.find(query) ==  calls_.end())
     {
-        conn -> initResponse(404);
+        req -> initResponse(404);
 
         if(errflag_)
         {
             Callback callback = error_.first;
             void    *arg      = error_.second;
 
-            callback(conn, conn -> getResponse(), arg);
+            callback(req, req -> getResponse(), arg);
         }
         else
         {
-            conn -> notFound();
+            req -> notFound();
         }
     }
     else
     {
-        conn -> initResponse(200);
+        req -> initResponse(200);
 
         Callback callback = calls_[query].first;
         void    *arg      = calls_[query].second;
-        callback(conn, conn -> getResponse(),arg);
+        callback(req, req -> getResponse(),arg);
     }
 }
 
