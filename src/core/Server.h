@@ -10,17 +10,18 @@ using namespace utils;
 
 #include "HttpRequest.h"
 #include "HttpResponse.h"
-using namespace sealedserver;
+using namespace http;
 
 #include "Channel.h"
 
 namespace ccomet
 {
 
-enum STATUS1 {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD};
-
 class Server : public Noncopyable
 {
+public:
+    typedef enum {SUCCEEED = 0, ERRPARAM, ERRCHANL, ERRDULPE, NEEDCLSD} ReqStatus;
+
 public:
     /// Singleton
     static Server& Instance();
@@ -43,7 +44,7 @@ public:
     ///
     /// @param req , HttpRequest
     ///        rep , HttpResponse
-    STATUS1 sign(HttpRequest *req, HttpResponse *rep);
+    ReqStatus sign(HttpRequest *req, HttpResponse *rep);
 
     /// Publish, publish a message
     /// Send a message to all active users
@@ -53,7 +54,7 @@ public:
     ///
     /// @param req , HttpRequest
     ///        rep , HttpResponse
-    STATUS1 publish(HttpRequest *req, HttpResponse *rep);
+    ReqStatus publish(HttpRequest *req, HttpResponse *rep);
 
     /// Subscribe, subscribe with special channel
     /// Wait for reply
@@ -62,10 +63,10 @@ public:
     ///
     /// @param req , HttpRequest
     ///        rep , HttpResponse
-    STATUS1 subscribe(HttpRequest *req, HttpResponse *rep);
+    ReqStatus subscribe(HttpRequest *req, HttpResponse *rep);
 
     /// error query string
-    STATUS1 error(HttpRequest *req, HttpResponse *rep);
+    ReqStatus error(HttpRequest *req, HttpResponse *rep);
 
 private:
     /// GetChannel with the channel name(`cname`)

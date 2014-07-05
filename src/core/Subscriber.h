@@ -10,7 +10,7 @@ using namespace utils;
 
 #include "HttpRequest.h"
 #include "HttpResponse.h"
-using namespace sealedserver;
+using namespace http;
 
 namespace ccomet
 {

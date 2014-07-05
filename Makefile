@@ -2,7 +2,7 @@ CXX     = g++
 AR	    = ar
 LIBMISC	= libsealedserver.a
 RANLIB  = ranlib
-HEADER  = -I./deps/SealedServer/include -I./deps/SealedServer/utils -I./src/core
+HEADER  = -I./deps/SealedServer/include -I./deps/SealedServer/utils -I./deps/SealedServer/http -I./src/core
 CXXFLAGS = -g -O0
 PTHRFLAGS = -lpthread -pthread
 

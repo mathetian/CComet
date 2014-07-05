@@ -8,14 +8,14 @@ using namespace utils;
 #include "HttpServer.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
-using namespace sealedserver;
+using namespace http;
 
 #include "Server.h"
 #include "ServerInstance.h"
 using namespace ccomet;
 
-#define      Port 8081
-ServerInstance   httpServer(Port);
+#define          Port 8081
+ServerInstance   httpServer(Port, 5);
 Server          &server = Server::Instance();
 
 void sign_handler(HttpRequest *req, HttpResponse *rep, void *arg)

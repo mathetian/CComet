@@ -17,24 +17,27 @@ class ServerInstance : public HttpServer
 {
 public:
 	/// Constructor
-	ServerInstance(int port): HttpServer(port, 0)
+	ServerInstance(int port, int portnum): HttpServer(port, portnum, 0), portnum_(portnum)
 	{
-		acceptor_ = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port); 
+		acceptors_ = vector<HttpAcceptor<ReqInstance>*>(portnum_, NULL);
+
+		for(int i = 0; i < portnum_ ; i++){
+			acceptors_[i] = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port); 
+		}
 	}
 
 	/// Destructor
     virtual ~ServerInstance()
     {
-    	if(acceptor_ != NULL)
-		{
-			delete acceptor_;
-		}
-
-		acceptor_ = NULL;
+    	for(int i = 0; i < portnum_ ; i++){
+    		delete acceptors_[i];
+    		acceptors_[i] = NULL;
+    	}
     }
 
 public:
-	HttpAcceptor<ReqInstance> *acceptor_;
+	vector<HttpAcceptor<ReqInstance>*> acceptors_;
+	int                                portnum_;
 };
 
 };

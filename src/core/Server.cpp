@@ -23,7 +23,7 @@ Server::~Server()
 {
 }
 
-STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
+Server::ReqStatus Server::sign(HttpRequest *req, HttpResponse *rep)
 {
     HttpParser *parser = req    -> getParser();
     Params      params = parser -> getParams();
@@ -60,7 +60,7 @@ STATUS1 Server::sign(HttpRequest *req, HttpResponse *rep)
     return SUCCEEED;
 }
 
-STATUS1 Server::publish(HttpRequest *req, HttpResponse *rep)
+Server::ReqStatus Server::publish(HttpRequest *req, HttpResponse *rep)
 {
     HttpParser *parser = req -> getParser();
     Params      params = parser -> getParams();
@@ -89,7 +89,7 @@ STATUS1 Server::publish(HttpRequest *req, HttpResponse *rep)
     return SUCCEEED;
 }
 
-STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
+Server::ReqStatus Server::subscribe(HttpRequest *req, HttpResponse *rep)
 {
     HttpParser *parser = req -> getParser();
     Params      params = parser -> getParams();
@@ -135,7 +135,7 @@ STATUS1 Server::subscribe(HttpRequest *req, HttpResponse *rep)
     return SUCCEEED;
 }
 
-STATUS1 Server::error(HttpRequest *req, HttpResponse *rep)
+Server::ReqStatus Server::error(HttpRequest *req, HttpResponse *rep)
 {
     /// TBD. We use the notfund here
     /// Anyone can add anything they need

@@ -28,7 +28,7 @@ public:
     }
 
 public:
-    void RegisterVariable(void *arg) 
+    virtual void RegisterVariable(void *arg) 
     { 
     	subscriber_ = (Subscriber*)arg;
     }
