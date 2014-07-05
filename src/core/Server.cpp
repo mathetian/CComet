@@ -48,7 +48,8 @@ Server::ReqStatus Server::sign(HttpRequest *req, HttpResponse *rep)
     if(subscriber)
     {
         /// Kill it. Then do it
-        delete subscriber; subscriber = NULL;
+        delete subscriber;
+        subscriber = NULL;
 
         INFO << "Duplicate Subscriber" ;
     }
@@ -119,7 +120,8 @@ Server::ReqStatus Server::subscribe(HttpRequest *req, HttpResponse *rep)
     if(subscriber)
     {
         /// Kill it. Then do it
-        delete subscriber; subscriber = NULL;
+        delete subscriber;
+        subscriber = NULL;
 
         INFO << "Duplicate Subscriber" ;
     }
@@ -209,7 +211,7 @@ void     Server::succeed(HttpRequest *req, HttpResponse *rep, int type)
     getlr(req, lcallback, rcallback);
 
     rep -> addHeader("Content-Type", "text/javascript; charset=utf-8");
-    
+
     if(type == 0)
     {
         rep -> addBody(lcallback + "{\"type\" : \"sign in\"}" + rcallback);

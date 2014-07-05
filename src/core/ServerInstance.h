@@ -16,28 +16,28 @@ namespace ccomet
 class ServerInstance : public HttpServer
 {
 public:
-	/// Constructor
-	ServerInstance(int port, int portnum): HttpServer(port, portnum, 0), portnum_(portnum)
-	{
-		acceptors_ = vector<HttpAcceptor<ReqInstance>*>(portnum_, NULL);
+    /// Constructor
+    ServerInstance(int port, int portnum): HttpServer(port, portnum, 0), portnum_(portnum)
+    {
+        acceptors_ = vector<HttpAcceptor<ReqInstance>*>(portnum_, NULL);
 
-		for(int i = 0; i < portnum_ ; i++){
-			acceptors_[i] = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port + i); 
-		}
-	}
+        for(int i = 0; i < portnum_ ; i++) {
+            acceptors_[i] = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port + i);
+        }
+    }
 
-	/// Destructor
+    /// Destructor
     virtual ~ServerInstance()
     {
-    	for(int i = 0; i < portnum_ ; i++){
-    		delete acceptors_[i];
-    		acceptors_[i] = NULL;
-    	}
+        for(int i = 0; i < portnum_ ; i++) {
+            delete acceptors_[i];
+            acceptors_[i] = NULL;
+        }
     }
 
 public:
-	vector<HttpAcceptor<ReqInstance>*> acceptors_;
-	int                                portnum_;
+    vector<HttpAcceptor<ReqInstance>*> acceptors_;
+    int                                portnum_;
 };
 
 };

@@ -55,17 +55,18 @@ int main()
     errno = 0;
 
     client.start();
-    
-    for(int i = 0; i < CliNum ;i++)
+
+    for(int i = 0; i < CliNum ; i++)
     {
-        stringstream ss; int port = Port + (i % PortNum);
-        ss << "127.0.0.1" << ":" << port << "/subscribe?channel=" ;  
+        stringstream ss;
+        int port = Port + (i % PortNum);
+        ss << "127.0.0.1" << ":" << port << "/subscribe?channel=" ;
         ss << (i % ChanNum) << "&sname=user" << i << "&seqid=0&callback=callback";
-        
+
         client.request(ss.str(), get, error, NULL);
         usleep(5*1000);
     }
-   
+
     client.wait();
 
     return 0;

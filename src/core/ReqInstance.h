@@ -16,10 +16,10 @@ namespace ccomet
 class ReqInstance : public HttpRequest
 {
 public:
-	/// Constructor, for the server
+    /// Constructor, for the server
     ReqInstance(HttpServer *server, EventLoop *loop, Socket sock) : HttpRequest(server, loop, sock)
     {
-    	subscriber_ = NULL;
+        subscriber_ = NULL;
     }
 
     /// Destructor
@@ -28,23 +28,23 @@ public:
     }
 
 public:
-    virtual void RegisterVariable(void *arg) 
-    { 
-    	subscriber_ = (Subscriber*)arg;
-    }
-
-private:
-	virtual void closed(ClsMtd st)
+    virtual void RegisterVariable(void *arg)
     {
-    	if(subscriber_ != NULL)
-    		delete subscriber_;
-    	subscriber_ = NULL;
+        subscriber_ = (Subscriber*)arg;
+    }
+
+private:
+    virtual void closed(ClsMtd st)
+    {
+        if(subscriber_ != NULL)
+            delete subscriber_;
+        subscriber_ = NULL;
     }
 
 private:
 
-	/// Subscriber
-	Subscriber *subscriber_;
+    /// Subscriber
+    Subscriber *subscriber_;
 };
 
 };

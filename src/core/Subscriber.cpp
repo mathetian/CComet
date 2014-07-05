@@ -9,10 +9,10 @@
 namespace ccomet
 {
 
-Subscriber::Subscriber(string sname, int seqid, string callback, Server *server, 
+Subscriber::Subscriber(string sname, int seqid, string callback, Server *server,
                        Channel *channel, HttpRequest *req, HttpResponse *rep)
-        : sname_(sname), seqid_(seqid), callback_(callback),
-            server_(server),  channel_(channel), req_(req), rep_(rep)
+    : sname_(sname), seqid_(seqid), callback_(callback),
+      server_(server),  channel_(channel), req_(req), rep_(rep)
 {
     channel_ -> add(this);
 }
