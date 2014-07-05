@@ -22,7 +22,7 @@ public:
 		acceptors_ = vector<HttpAcceptor<ReqInstance>*>(portnum_, NULL);
 
 		for(int i = 0; i < portnum_ ; i++){
-			acceptors_[i] = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port); 
+			acceptors_[i] = new HttpAcceptor<ReqInstance>(this, pool_.getRandomLoop(), port + i); 
 		}
 	}
 

@@ -47,8 +47,10 @@ Server::ReqStatus Server::sign(HttpRequest *req, HttpResponse *rep)
     Subscriber *subscriber = channel -> find(sname);
     if(subscriber)
     {
-        errorInOthers(req, rep);
-        return ERRDULPE;
+        /// Kill it. Then do it
+        delete subscriber; subscriber = NULL;
+
+        INFO << "Duplicate Subscriber" ;
     }
 
     /// Tell others in the same channel that somebody has logined in.
@@ -116,8 +118,10 @@ Server::ReqStatus Server::subscribe(HttpRequest *req, HttpResponse *rep)
     /// Can't duplicate
     if(subscriber)
     {
-        errorInOthers(req, rep);
-        return ERRDULPE;
+        /// Kill it. Then do it
+        delete subscriber; subscriber = NULL;
+
+        INFO << "Duplicate Subscriber" ;
     }
 
     /// Create the subscriber if not exist

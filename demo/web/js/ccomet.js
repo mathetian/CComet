@@ -17,7 +17,7 @@ function CComet(config)
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
-			timeout: 60000,
+			timeout: 10000,
 			success: function(msg)
 			{
 				try
@@ -54,7 +54,7 @@ function CComet(config)
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
-			timeout: 60000,
+			timeout: 10000,
 			success: function(msg)
 			{
 				try
@@ -99,7 +99,7 @@ function CComet(config)
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
-			timeout: 60000,
+			timeout: 10000,
 			success: function(msg)
 			{
 				try
