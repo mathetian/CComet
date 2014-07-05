@@ -23,14 +23,6 @@ ccomet: ${SOURCES}
 bench_comet: tests/bench_comet.cpp
 	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
 	mv $@ bin
-
-bench_comet_http: tests/bench_comet_http.cpp
-	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
-	mv $@ bin
-
-bench_c100k: tests/bench_c100k.cpp
-	$(CXX) ${CXXFLAGS} ${HEADER} ${PTHRFLAGS} $^ -o $@ ${LIBMISC}
-	mv $@ bin
 	
 prepare:
 	-mkdir bin

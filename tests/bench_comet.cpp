@@ -2,124 +2,36 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "Header.h"
+#include "HttpClient.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
+using namespace http;
 
-#include "Socket.h"
-#include "Acceptor.h"
-#include "EventPool.h"
-#include "MsgHandler.h"
-using namespace sealedserver;
+HttpClient client;
 
-#define BASE_PORT 10000
-#define PORT_NUM  10
+#define CliNum  100000
+#define ChanNum 100000
 
-#define CLIENT_NUM 200000
+#define Port    8081
+#define PortNum 5
 
-EventPool pool(1);
-
-int num;
-
-int globalid = 0;
-
-class EchoClient : public MSGHandler
+void get(HttpRequest *req, void *arg)
 {
-public:
-    EchoClient(EventLoop* loop, Socket sock) : MSGHandler(loop, sock)
-    {
-        m_first = true;
-        registerWrite();
-    }
+    HttpParser *parser = req -> getParser();
 
-    ~EchoClient() { }
+    WARN << parser -> getOrigin() ;
+}
 
-protected:
-    /// Invoked when a connection we try either succeeds or fails.
-    virtual void connected()
-    {
-        char buf[1024];
-
-        sprintf(buf, "GET /subscribe?channel=%s%d&sname=%d&callback=%s&seqid=0 sss", \
-                "channelname", rand()%10000, globalid, "callback");
-
-        globalid++;
-        write(buf);
-    }
-
-    /// Invoked when a message is received
-    virtual void receivedMsg(STATUS status, Buffer &receivedBuff)
-    {
-        if(status == SUCC)
-        {
-            DEBUG << "Received(from " <<  m_sock.fd() <<  "):" << (string)receivedBuff;
-        }
-        else assert(0);
-    }
-
-    /// Invoked when a msg has been sent
-    virtual void sentMsg(STATUS status, int len, int targetLen)
-    {
-        if(status == SUCC)
-        {
-            DEBUG << "SendedMsg(to " <<  m_sock.fd() <<  "):" << len << " " << targetLen;
-        }
-        else assert(0);
-    }
-
-    // Invoke when the socket has been closed
-    virtual void closed(ClsMtd st)
-    {
-        DEBUG << "onCloseSocket(for " <<  m_sock.fd() <<  "):" << st;
-        if(errno != 0) DEBUG << strerror(errno);
-
-        errno = 0;
-    }
-};
-
-/// Simulator of clients
-/// In it, we will try to create `CLIENT_NUM`s clients (EchoClient)
-/// Then, try to create `EchoClient` to bind the socket with this client
-
-class ClientSimulator
+void error(HttpRequest *req, void *arg)
 {
-public:
-    ClientSimulator(string ip, int port)
-    {
-        createClients(ip, port);
-    }
-
-    ClientSimulator(int port)
-    {
-        createClients("127.0.0.1", port);
-    }
-
-private:
-    void createClients(string ip, int port)
-    {
-        for(int i = 0; i < CLIENT_NUM; i++)
-        {
-            NetAddress svrAddr(ip, port + (i%PORT_NUM));
-
-            Socket sock(AF_INET, SOCK_STREAM);
-            sock.connect(&svrAddr);
-
-            EchoClient *client = new EchoClient(pool.getRandomLoop(), sock);
-
-            if(i % 10000==0)
-            {
-                printf("press Enter to continue: ");
-                getchar();
-            }
-
-            usleep(1 * 1000);
-        }
-    }
-};
+    WARN << "error" ;
+}
 
 /// Signal Stop the server
 void signalStop(int)
 {
     INFO << "Stop running...by manually";
-    pool.stop();
+    client.stop();
 }
 
 /// Change the configure
@@ -142,13 +54,19 @@ int main()
     setlimit(100000);
     errno = 0;
 
-    pool.subrun();
-
-    ClientSimulator simulator(BASE_PORT);
-
-    pool.subjoin();
-
-    INFO << "End of Main";
+    client.start();
+    
+    for(int i = 0; i < CliNum ;i++)
+    {
+        stringstream ss; int port = Port + (i % PortNum);
+        ss << "127.0.0.1" << ":" << port << "/subscribe?channel=" ;  
+        ss << (i % ChanNum) << "&sname=user" << i << "&seqid=0&callback=callback";
+        
+        client.request(ss.str(), get, error, NULL);
+        usleep(5*1000);
+    }
+   
+    client.wait();
 
     return 0;
 }

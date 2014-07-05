@@ -112,3 +112,17 @@ This client is licensed under the same license as SealedServer. And this license
 ## Todo List
 1. Android & Windows Phone 8
 2. Full Test 
+
+## Other Experiments we conducted
+
+1. Http Server will cost 2KB/Connection
+
+2. Http Client will cost 1KB/Connection
+
+3. The speed of change in `VRT` is far more small than in `RES`.
+
+48 19(15k)
+63 25(20k)
+81 32(25k)
+96 38(30k)
+112 45(35k)

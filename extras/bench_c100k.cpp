@@ -71,7 +71,7 @@ int main(int argc, char **argv)
             printf("%d, press Enter to continue: ", connections);
             getchar();
         }
-        usleep(1 * 1000);
+        usleep(5 * 1000);
     }
 
     return 0;
