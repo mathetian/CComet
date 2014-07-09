@@ -1,20 +1,16 @@
 CComet
 ======
-CComet is A tiny [Comet](http://en.wikipedia.org/wiki/Comet_(programming)) Based on [EventServer](https://github.com/mathetian/EventServer)
+CComet is a tiny [Comet](http://en.wikipedia.org/wiki/Comet_(programming)) based on [EventServer](https://github.com/mathetian/EventServer) and it is developed and maintained by [Yulong Tian](http://github.com/mathetian). To be specific, `CComet` uses the http module provided by `EventServer`.
 
-[Comet](http://en.wikipedia.org/wiki/Comet_(programming)) is a technology for push-notification server. It allows a web server to push data to a browser through HTTP protocal. In other atomsphere, such as android and windows phone, it can behaves [GCM](developer.android.com/google/gcm/‎) and [MPNS](http://msdn.microsoft.com/en-us/library/windows/apps/hh913756.aspx).
-
-[EventServer](https://github.com/mathetian/EventServer) is a light-weighted network programming framework written by [mathetian](https://github.com/mathetian). To reduce redundant code, I remove some features, such as timer event and select selector, and add a tiny-http server based on it. 
-
-Notice: the version of `EventServer` library used by `CComet` is outdated.
+[Comet](http://en.wikipedia.org/wiki/Comet_(programming)) is a technology for push-notification server. It allows a web server to push data to a browser through HTTP protocal. In other atomsphere, such as android and windows phone, it can behaves [GCM](http://developer.android.com/google/gcm/‎) and [MPNS](http://msdn.microsoft.com/en-us/library/windows/apps/hh913756.aspx).
 
 CComet can be used as the messaging server of many applications. To demonstrate the use of the library, I have provided a webchat demo in this project. In future, I will also provide sdks for android and windows phone apps.
 
-Our work is mainly inspired by [icomet](https://github.com/ideawu/icomet) and I have taken many interesting idea from [ideawu](https://github.com/ideawu)(from blogs and source code). Thanks for `ideawu`. Thanks again for open-source group.
+Our work is mainly inspired by [icomet](https://github.com/ideawu/icomet) and I have taken many interesting idea from [ideawu](https://github.com/ideawu), both from blogs and source code. Thanks for `ideawu`. Thanks again for OSC (Open Source Community).
 
 ## Usage
 
-Start the server.
+### 1. Start the server.
 
 ```shell
 git clone https://github.com/mathetian/CComet
@@ -26,26 +22,48 @@ cd bin
 
 And run the web-demo in directory ```demo/web/```
 
-## API
-
-### JavaScript
-
-### Android
-
-### Windows Phone 8
-
-## Run the chat demo
+### 2. Run the chat demo
 
 1. Compile and start ccomet server
 2. Drag and drop the file demos/web/chat.html into one web browser
 3. Drag and drop the file demos/web/chat.html into another different web browser
 4. Start chatting!
 
-## Memory Usage
+## Client API
+We provide a client api of javascript in __CComet__. 
+```Javascript
+function CComet(config)
+{
+	var self = this;
+	var sign_sta = false;
+	self.seqid = 0;
+	self.sub_url  = config.sub_url;
+	self.pub_url  = config.pub_url;
+	self.sign_url = config.sign_url;
+	self.callback = config.callback;
+
+	self.sign = function(){
+	    /// For detail information, please seek for the ccomet.js
+	}
+
+	self.sub = function(){
+	    /// For detail information, please seek for the ccomet.js
+	}
+	
+	self.pub = function(content){
+	    /// For detail information, please seek for the ccomet.js
+	}
+
+	self.sign();
+}
+
+```
+
+## Performance
 
 ```
 CComet   :   version 1.0
-Date     :   Sunday April 13 20:24:47 2014
+Date     :   Sunday June 20 20:24:47 2014
 CPU      :   4 * Intel(R) Core(TM) i5-3317U CPU @ 1.70GHz
 CPUCache :   3072 KB
 G++      :   4.8.1
@@ -53,18 +71,7 @@ Demux    :   EPoll
 Phy-Mem  :   3888 MB
 ```
 
-1. First, we have tested the stability of our system. We will simulate one situation, different users connect to the server and after a short of period, they will be disconnected by themselves or by the server. At the same time, the total number of active connections won't be changed dynamically.
-
-2. Basic Test for huge connection. 
-
-| Active-Connection  | VIRT  | RES   |
-| -----------        | ----  | ---   | 
-| 1000               |       |       |
-| 5000               |       |       |
-| 10000              |       |       |   
-| 50000              |       |       |
-| 100000             |       |       |
-
+In the benchmark of `EventServer`, we have found out the QPS and the memory cost of each connection of http module. We will discuss the cost of memory when we add a layer of ccomet.
 
 | Connections        | VIRT  | RES   |
 | -----------        | ----  | ---   | 
@@ -76,24 +83,12 @@ Phy-Mem  :   3888 MB
 
 0.92 KB per connection `?`
 
-## Bugs
+__Discussion__ : Through our experiments, we have proved the stability of our system.
 
-There are many bugs in the project.
-
-1. Write buffer overflow
-2. Can't process specil character.
-3. ...
-
-## Todo lists
-
-1. Client Simulators
-2. Perfect HTTP Server
-3. Memory Pool
-3. ...
 
 ## Design Principle
 
-1. Use jsonp to solve [CORS](en.wikipedia.org/wiki/Cross-origin_resource_sharing‎)(Cross-Origin Resource Sharing) problem.
+1. Use jsonp to solve [CORS](en.wikipedia.org/wiki/Cross-origin_resource_sharing‎) which is short for Cross-Origin Resource Sharing, problems.
 2. Long-polling instead of polling. To solve some problem in jsonp, I use a timeout 30 seconds, which is a reasonable value, in produce mode.
 3. Compared with `icomet`, I remove authetication flow and support for iframe technology.
 
@@ -111,18 +106,5 @@ This client is licensed under the same license as EventServer. And this license 
 
 ## Todo List
 1. Android & Windows Phone 8
-2. Full Test 
-
-## Other Experiments we conducted
-
-1. Http Server will cost 2KB/Connection
-
-2. Http Client will cost 1KB/Connection
-
-3. The speed of change in `VRT` is far more small than in `RES`.
-
-48 19(15k)
-63 25(20k)
-81 32(25k)
-96 38(30k)
-112 45(35k)
+2. Memory Pool
+3. ...
