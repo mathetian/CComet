@@ -144,7 +144,7 @@ Although we provde a simple package for event driven server, it is still hard to
 
 ## EventServer UML Graph
 
-![EventServer UML Graph](https://raw.githubusercontent.com/mathewes/blog-dot-file/master/SealedServer.png)
+![EventServer UML Graph](https://raw.githubusercontent.com/mathewes/blog-dot-file/master/EventServer.png)
 
 
 ## Todo List

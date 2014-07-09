@@ -1,12 +1,12 @@
 CComet
 ======
-CComet is A tiny [Comet](http://en.wikipedia.org/wiki/Comet_(programming)) Based on [SealedServer](https://github.com/mathetian/SealedServer)
+CComet is A tiny [Comet](http://en.wikipedia.org/wiki/Comet_(programming)) Based on [EventServer](https://github.com/mathetian/EventServer)
 
 [Comet](http://en.wikipedia.org/wiki/Comet_(programming)) is a technology for push-notification server. It allows a web server to push data to a browser through HTTP protocal. In other atomsphere, such as android and windows phone, it can behaves [GCM](developer.android.com/google/gcm/‎) and [MPNS](http://msdn.microsoft.com/en-us/library/windows/apps/hh913756.aspx).
 
-[SealedServer](https://github.com/mathetian/SealedServer) is a light-weighted network programming framework written by [mathetian](https://github.com/mathetian). To reduce redundant code, I remove some features, such as timer event and select selector, and add a tiny-http server based on it. 
+[EventServer](https://github.com/mathetian/EventServer) is a light-weighted network programming framework written by [mathetian](https://github.com/mathetian). To reduce redundant code, I remove some features, such as timer event and select selector, and add a tiny-http server based on it. 
 
-Notice: the version of `SealedServer` library used by `CComet` is outdated.
+Notice: the version of `EventServer` library used by `CComet` is outdated.
 
 CComet can be used as the messaging server of many applications. To demonstrate the use of the library, I have provided a webchat demo in this project. In future, I will also provide sdks for android and windows phone apps.
 
@@ -107,7 +107,7 @@ There are many bugs in the project.
 
 ## License
 
-This client is licensed under the same license as SealedServer. And this license will be restricted by the license of `icomet`.
+This client is licensed under the same license as EventServer. And this license will be restricted by the license of `icomet`.
 
 ## Todo List
 1. Android & Windows Phone 8

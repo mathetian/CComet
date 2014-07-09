@@ -1,8 +1,8 @@
 CXX     = g++
 AR	    = ar
-LIBMISC	= libsealedserver.a
+LIBMISC	= libeventserver.a
 RANLIB  = ranlib
-HEADER  = -I./deps/SealedServer/include -I./deps/SealedServer/utils -I./deps/SealedServer/http -I./src/core
+HEADER  = -I./deps/EventServer/include -I./deps/EventServer/utils -I./deps/EventServer/http -I./src/core
 CXXFLAGS = -g -O0
 PTHRFLAGS = -lpthread -pthread
 
@@ -26,7 +26,7 @@ bench_comet: tests/bench_comet.cpp
 	
 prepare:
 	-mkdir bin
-	cd deps/SealedServer; make; cp *.a ../..; cd ../..
+	cd deps/EventServer; make; cp *.a ../..; cd ../..
 
 clean: 
 	-rm -rf bin comet bench*
